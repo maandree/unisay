@@ -598,6 +598,7 @@ public class Unisay
 	final InputStream is = new BufferedInputStream(new FileInputStream(new File(ponyFile)));
 	variables.put("\\", Util.toBytes(l));
 	variables.put("/", Util.toBytes(L));
+	variables.put("", Util.toBytes((int)'$'));
 	int indent = 0;
 	
 	boolean esc = false;
