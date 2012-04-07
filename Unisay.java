@@ -414,13 +414,35 @@ public class Unisay
 	    map.put("s:",  new ArrayList<int[]>());
 	    map.put("sw:", new ArrayList<int[]>());
 	    map.put( "w:", new ArrayList<int[]>());
-	    map.put("l:",  new ArrayList<int[]>());
-	    map.put("L:",  new ArrayList<int[]>());
+	    map.put("\\:", new ArrayList<int[]>());
+	    map.put("/:",  new ArrayList<int[]>());
 	    
-	    int colon = 0;
 	    for (int d; (d = is.read()) != -1;)
 	    {
-		buf[ptr++] = d;
+		if ((d & 128) == 128)
+		{
+		    int dn = 0;
+		    while ((d & 128) == 128)
+		    {
+			dn++;
+			d <<= 1;
+		    }
+		    if (dn == 1)
+			continue;
+		    d &= 0xFF;
+		    d >>>= dn;
+		    for (int i = 1; i < dn; i++)
+		    {
+			int pd = is.read();
+			if (pd == -1)
+			    break;
+			d <<= 6;
+			d |= pd & 0x3F;
+		    }
+		}
+		
+		if ((state != 1) || (d != (int)'\n'))
+		    buf[ptr++] = d;
 		if (ptr == SIZE)
 		{
 		    front.add(buf);
@@ -434,18 +456,17 @@ public class Unisay
 		    front.add(buf);
 		    buf = front.get(0);
 		    front.clear();
-		    final char[] cbuf = new char[buf.length];
+		    final char[] cbuf = new char[ptr];
 		    for (int i = 0; i < ptr; i++)
 			cbuf[i] = (char)(buf[i]);
 		    String tmp = new String(cbuf);
-		    if (Util.equalsAny(tmp, "nw:", "n:", "ne:", "e:", "se:", "s:", "sw:", "w:", "l:", "L:"))
+		    if (Util.equalsAny(tmp, "nw:", "n:", "ne:", "e:", "se:", "s:", "sw:", "w:", "\\:", "/:"))
 			dir = tmp;
 		    else if (tmp.equals(":") == false)
 		    {
 			dir = null;
 			System.err.println("Unrecognised format part: " + tmp.substring(0, tmp.length() - 1));
 		    }
-		    colon = ptr;
 		    ptr = 0;
 		}
 		else if ((state == 1) && (d == (int)'\n'))
@@ -456,10 +477,8 @@ public class Unisay
 			System.arraycopy(front.get(i), 0, line, i * SIZE, SIZE);
 		    front.clear();
 		    System.arraycopy(buf, 0, line, front.size() * SIZE, ptr);
-		    final int[] cl = new int[line.length - colon];
-		    System.arraycopy(line, colon, cl, 0, cl.length);
-		    ptr = colon = 0;
-		    map.get(dir).add(cl);
+		    ptr = 0;
+		    map.get(dir).add(line);
 		}
 	    }
 	    
@@ -479,7 +498,7 @@ public class Unisay
 	    
 	    map.get("nw:").toArray(mnw);  map.get("n:").toArray(mn);  map.get("ne:").toArray(mne);
 	    map.get( "w:").toArray(mw);                               map.get( "e:").toArray(me);
-	    map.get("sw:").toArray(msw);  map.get("s:").toArray(me);  map.get("se:").toArray(mse);
+	    map.get("sw:").toArray(msw);  map.get("s:").toArray(ms);  map.get("se:").toArray(mse);
 	    map.get("\\:").toArray(ml);   map.get("/:").toArray(mL);
 	}
 	
@@ -510,16 +529,18 @@ public class Unisay
 		    if (ptr > 0)
 		    {
 			byte[] app = new byte[ptr];
-			System.arraycopy(app, 0, buf, 0, ptr);
+			System.arraycopy(buf, 0, app, 0, ptr);
 			list.add(app);
 		    }
-		    ptr = 0;
+		    lines.add(list);
+		    list = new ArrayList<byte[]>();
 		    lens.add(new int[] { len });
+		    ptr = 0;
 		    len = 0;
 		}
 		else
 		{
-		    if ((d >>> 6) != 2)
+		    if ((d & 0xC0) != 0xC0)
 			if (d == '\033')
 			    esc = true;
 			else if (!esc)
@@ -535,6 +556,15 @@ public class Unisay
 		    }
 		}
 	    }
+	    
+	    if (ptr > 0)
+	    {
+		byte[] app = new byte[ptr];
+		System.arraycopy(buf, 0, app, 0, ptr);
+		list.add(app);
+	    }
+	    lens.add(new int[] { len });
+	    lines.add(list);
 	}
 	
 	while ((lines.size() > 1) && (lines.get(lines.size() - 1).isEmpty()))
