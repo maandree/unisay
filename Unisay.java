@@ -16,8 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.io.*;
 
 
@@ -42,28 +41,30 @@ public class Unisay
      * This is the main entry point of the program
      * 
      * @param  args  Startup arguments, start the program with </code>--help</code> for details
+     * 
+     * @throws  IOException  On I/O exception
      */
-    public static void main(final String... args)
+    public static void main(final String... args) throws IOException
     {
 	boolean help = false, anyarg = false;
 	boolean random = false, format = false, dash = false;
 	boolean say = false, icp = false, fcp = false, ocp = false;
 	for (final String arg : args)
-	    if (equalsAny(arg, "--help", "-h"))
+	    if (Util.equalsAny(arg, "--help", "-h"))
 		help = true;
-	    else if (equalsAny(arg, "--"))
+	    else if (Util.equalsAny(arg, "--"))
 		anyarg = dash = true;
-	    else if (equalsAny(arg, "--random", "-r"))
+	    else if (Util.equalsAny(arg, "--random", "-r"))
 		anyarg = random = true;
-	    else if (equalsAny(arg, "--format", "-p"))
+	    else if (Util.equalsAny(arg, "--format", "-p"))
 		anyarg = format = true;
-	    else if (equalsAny(arg, "--say", "-s"))
+	    else if (Util.equalsAny(arg, "--say", "-s"))
 		anyarg = say = true;
-	    else if (equalsAny(arg, "--in-encoding", "--icp", "--ie", "-i"))
+	    else if (Util.equalsAny(arg, "--in-encoding", "--icp", "--ie", "-i"))
 		anyarg = icp = true;
-	    else if (equalsAny(arg, "--file-encoding", "--fcp", "--fe", "-f"))
+	    else if (Util.equalsAny(arg, "--file-encoding", "--fcp", "--fe", "-f"))
 		anyarg = fcp = true;
-	    else if (equalsAny(arg, "--out-encoding", "--ocp", "--oe", "-o"))
+	    else if (Util.equalsAny(arg, "--out-encoding", "--ocp", "--oe", "-o"))
 		anyarg = ocp = true;
 	    
 	final boolean allargs = !anyarg;
@@ -85,7 +86,7 @@ public class Unisay
 	    System.out.println("  unisay [-pifos <FILE> <CP> <CP> <CP> <TEXT>] (-r | [--] <FILES...>)");
 	    System.out.println();
 	    System.out.println("  -p <FILE>, -i <CP>, -f <CP>, -o <CP> and -s <TEXT>");
-	    System.out.println("  are mutally independent and be included as you see fit.");
+	    System.out.println("  are mutally independent and may be included as you see fit.");
 	    System.out.println();
 	    System.out.println("  <FILES...> are whitespace separated files with ponys (or whatever),");
 	    System.out.println("  that are used printed in the output.");
@@ -255,8 +256,10 @@ public class Unisay
      * methods and takes care of the <code>--help</code> argument.
      * 
      * @param  args  Startup arguments, start the program with </code>--help</code> for details
+     * 
+     * @throws  IOException  On I/O exception
      */
-    private static void start(final String... args)
+    private static void start(final String... args) throws IOException
     {
 	String nw =  "/-", n = "-", ne = "-\\",
 	        w =  "| ",           e = " |",
@@ -272,21 +275,23 @@ public class Unisay
 	
 	boolean random = false;
 	boolean dash = false;
-	
-	for (final String arg : args)
+	for (int i = 0, m = args.length; i < m; i++)
+        {
+	    final String arg = args[i];
+	    
 	    if (dash)
 		pony.add(arg);
-	    else if (equalsAny(arg, "--"))
+	    else if (Util.equalsAny(arg, "--"))
 		dash = true;
-	    else if (equalsAny(arg, "--random", "-r"))
+	    else if (Util.equalsAny(arg, "--random", "-r"))
 		if (random)
 		    System.err.println("--random (-r) should only be used once.");
 		else
 		    random = true;
-	    else if (equalsAny(arg, "--format", "-p"))
-		format.add(arg);
-	    else if (equalsAny(arg, "--say", "-s"))
-		say.add(arg);
+	    else if (Util.equalsAny(arg, "--format", "-p"))
+		format.add(args[++i]);
+	    else if (Util.equalsAny(arg, "--say", "-s"))
+		say.add(args[++i]);
 	    else if (arg.startsWith("-"))
 	    {
 		System.err.println("Unrecognised option, assuming it is a pony file: " + arg);
@@ -294,10 +299,11 @@ public class Unisay
 	    }
 	    else
 		pony.add(arg);
+	}
 	
 	final String oneSay;
 	final String onePony;
-	final String oneFormat;
+	String oneFormat;
 	
 	if (say.isEmpty() == false)
 	    oneSay = say.get((int)(Math.random() * say.size()));
@@ -308,7 +314,7 @@ public class Unisay
 	    onePony = pony.get((int)(Math.random() * pony.size()));
 	else
 	{
-	    final String privateDir = "~/.local/share/unisay/pony/".replace("~", getProperty("HOME"));
+	    final String privateDir = "~/.local/share/unisay/pony/".replace("~", Util.getProperty("HOME"));
 	    final String publicDir  = "/usr/local/share/unisay/pony/";
 	    
 	    final String privateDefault = privateDir + "default";
@@ -376,29 +382,17 @@ public class Unisay
 	    mw = new int[1][w.length()];
 	    ml = new int[1][l.length()];
 	    mL = new int[1][L.length()];
-	    for (int i = 0, m = e.length(); i < m; i++)  me[i] = (int)(e.charAt(i));
-	    for (int i = 0, m = w.length(); i < m; i++)  mw[i] = (int)(w.charAt(i));
-	    for (int i = 0, m = l.length(); i < m; i++)  ml[i] = (int)(l.charAt(i));
-	    for (int i = 0, m = L.length(); i < m; i++)  mL[i] = (int)(L.charAt(i));
-	    String[] t;
-	    for (int i = 0, mi = nes.length; i < mi; i++)
-		for (int j = 0, mj = (mne[i] = new int[(t = nes[i]).length()]).length; j < mj; j++)
-		    t[j] = (int)(t.charAt(j));
-	    for (int i = 0, mi = ns.length; i < mi; i++)
-		for (int j = 0, mj = (mn[i] = new int[(t = ns[i]).length()]).length; j < mj; j++)
-		    t[j] = (int)(t.charAt(j));
-	    for (int i = 0, mi = nws.length; i < mi; i++)
-		for (int j = 0, mj = (mnw[i] = new int[(t = nws[i]).length()]).length; j < mj; j++)
-		    t[j] = (int)(t.charAt(j));
-	    for (int i = 0, mi = sws.length; i < mi; i++)
-		for (int j = 0, mj = (msw[i] = new int[(t = sws[i]).length()]).length; j < mj; j++)
-		    t[j] = (int)(t.charAt(j));
-	    for (int i = 0, mi = ss.length; i < mi; i++)
-		for (int j = 0, mj = (ms[i] = new int[(t = ss[i]).length()]).length; j < mj; j++)
-		    t[j] = (int)(t.charAt(j));
-	    for (int i = 0, mi = ses.length; i < mi; i++)
-		for (int j = 0, mj = (mse[i] = new int[(t = ses[i]).length()]).length; j < mj; j++)
-		    t[j] = (int)(t.charAt(j));
+	    for (int i = 0, m = e.length(); i < m; i++)  me[0][i] = (int)(e.charAt(i));
+	    for (int i = 0, m = w.length(); i < m; i++)  mw[0][i] = (int)(w.charAt(i));
+	    for (int i = 0, m = l.length(); i < m; i++)  ml[0][i] = (int)(l.charAt(i));
+	    for (int i = 0, m = L.length(); i < m; i++)  mL[0][i] = (int)(L.charAt(i));
+	    String t;
+	    for (int i = 0, mi = nes.length; i < mi; i++)    for (int j = 0, mj = (mne[i] = new int[(t = nes[i]).length()]).length; j < mj; j++)    mne[i][j] = (int)(t.charAt(j));
+	    for (int i = 0, mi =  ns.length; i < mi; i++)    for (int j = 0, mj = (mn [i] = new int[(t = ns [i]).length()]).length; j < mj; j++)    mn [i][j] = (int)(t.charAt(j));
+	    for (int i = 0, mi = nws.length; i < mi; i++)    for (int j = 0, mj = (mnw[i] = new int[(t = nws[i]).length()]).length; j < mj; j++)    mnw[i][j] = (int)(t.charAt(j));
+	    for (int i = 0, mi = sws.length; i < mi; i++)    for (int j = 0, mj = (msw[i] = new int[(t = sws[i]).length()]).length; j < mj; j++)    msw[i][j] = (int)(t.charAt(j));
+	    for (int i = 0, mi =  ss.length; i < mi; i++)    for (int j = 0, mj = (ms [i] = new int[(t = ss [i]).length()]).length; j < mj; j++)    ms [i][j] = (int)(t.charAt(j));
+	    for (int i = 0, mi = ses.length; i < mi; i++)    for (int j = 0, mj = (mse[i] = new int[(t = ses[i]).length()]).length; j < mj; j++)    mse[i][j] = (int)(t.charAt(j));
 	}
 	else
 	{
@@ -412,17 +406,18 @@ public class Unisay
 	    String dir = null;
 	    
 	    final HashMap<String, ArrayList<int[]>> map = new HashMap<String, ArrayList<int[]>>();
-	    map.put("nw:", new ArrayList<int[]>>);
-	    map.put("n:",  new ArrayList<int[]>>);
-	    map.put("ne:", new ArrayList<int[]>>);
-	    map.put( "e:", new ArrayList<int[]>>);
-	    map.put("se:", new ArrayList<int[]>>);
-	    map.put("s:",  new ArrayList<int[]>>);
-	    map.put("sw:", new ArrayList<int[]>>);
-	    map.put( "w:", new ArrayList<int[]>>);
-	    map.put("l:",  new ArrayList<int[]>>);
-	    map.put("L:",  new ArrayList<int[]>>);
+	    map.put("nw:", new ArrayList<int[]>());
+	    map.put("n:",  new ArrayList<int[]>());
+	    map.put("ne:", new ArrayList<int[]>());
+	    map.put( "e:", new ArrayList<int[]>());
+	    map.put("se:", new ArrayList<int[]>());
+	    map.put("s:",  new ArrayList<int[]>());
+	    map.put("sw:", new ArrayList<int[]>());
+	    map.put( "w:", new ArrayList<int[]>());
+	    map.put("l:",  new ArrayList<int[]>());
+	    map.put("L:",  new ArrayList<int[]>());
 	    
+	    int colon = 0;
 	    for (int d; (d = is.read()) != -1;)
 	    {
 		buf[ptr++] = d;
@@ -439,14 +434,18 @@ public class Unisay
 		    front.add(buf);
 		    buf = front.get(0);
 		    front.clear();
-		    String tmp = new String(buf, 0, ptr, "UTF-8");
-		    if (equalsAny(tmp, "nw:", "n:", "ne:", "e:", "se:", "s:", "sw:", "w:", "l:", "L:"))
+		    final char[] cbuf = new char[buf.length];
+		    for (int i = 0; i < ptr; i++)
+			cbuf[i] = (char)(buf[i]);
+		    String tmp = new String(cbuf);
+		    if (Util.equalsAny(tmp, "nw:", "n:", "ne:", "e:", "se:", "s:", "sw:", "w:", "l:", "L:"))
 			dir = tmp;
 		    else if (tmp.equals(":") == false)
 		    {
 			dir = null;
 			System.err.println("Unrecognised format part: " + tmp.substring(0, tmp.length() - 1));
 		    }
+		    colon = ptr;
 		    ptr = 0;
 		}
 		else if ((state == 1) && (d == (int)'\n'))
@@ -457,12 +456,26 @@ public class Unisay
 			System.arraycopy(front.get(i), 0, line, i * SIZE, SIZE);
 		    front.clear();
 		    System.arraycopy(buf, 0, line, front.size() * SIZE, ptr);
-		    ptr = 0;
-		    map.get(dir).add(line);
+		    final int[] cl = new int[line.length - colon];
+		    System.arraycopy(line, colon, cl, 0, cl.length);
+		    ptr = colon = 0;
+		    map.get(dir).add(cl);
 		}
 	    }
 	    
 	    is.close();
+	    
+	    
+	    mne = new int[map.get("ne:").size()][];
+	    mn  = new int[map.get( "n:").size()][];
+	    mnw = new int[map.get("nw:").size()][];
+	    msw = new int[map.get("sw:").size()][];
+	    ms  = new int[map.get( "s:").size()][];
+	    mse = new int[map.get("se:").size()][];
+	    me = new int[1][];
+	    mw = new int[1][];
+	    ml = new int[1][];
+	    mL = new int[1][];
 	    
 	    map.get("nw:").toArray(mnw);  map.get("n:").toArray(mn);  map.get("ne:").toArray(mne);
 	    map.get( "w:").toArray(mw);                               map.get( "e:").toArray(me);
@@ -470,19 +483,9 @@ public class Unisay
 	    map.get("\\:").toArray(ml);   map.get("/:").toArray(mL);
 	}
 	
-	if (is != null)
-	    try
-	    {
-		is.close();
-	    }
-	    catch (final Throwable err)
-	    {
-		//Ignore
-	    }
-	
 	final ArrayList<int[]> lens = new ArrayList<int[]>();
 	final ArrayList<ArrayList<byte[]>> lines = new ArrayList<ArrayList<byte[]>>();
-	if (oneSay == null)
+	if (oneSay != null)
 	    for (final String line : oneSay.split("\n"))
 	    {
 		final byte[] bs = line.getBytes("UTF-8");
@@ -542,148 +545,10 @@ public class Unisay
 	    if (maxlen < len[0])
 		maxlen = len[0];
 	
-	final Baloon baloon = new Baloon(lens, maxlen, say, mnw, mn, mne, me, mse, ms, msw, mw);
-	say(oneSay, baloon, ml, mL);
+	final Baloon baloon = new Baloon(lens, maxlen, lines, mnw, mn, mne, me[0], mse, ms, msw, mw[0]);
+	say(onePony, baloon, ml[0], mL[0]);
     }
     
-    /**
-     * Baloon class
-     *
-     * @author  Mattias Andrée, <a href="mailto:maandree@kth.se">maandree@kth.se</a>
-     */
-    private static class Baloon
-    {
-	/**
-	 * Constructor
-	 *
-	 * @param  lens    The length of each line
-	 * @param  maxlen  The width of the saying
-	 * @param  say     The saying
-	 * @param  nw      NW part of baloon
-	 * @param  n       N  part of baloon
-	 * @param  ne      NE part of baloon
-	 * @param  e       E  part of baloon
-	 * @param  se      SE part of baloon
-	 * @param  s       S  part of baloon
-	 * @param  sw      SW part of baloon
-	 * @param  w       W  part of baloon
-	 */
-	@SuppressWarnings("hiding")
-	public Baloon(final ArrayList<int[]> lens, final int maxlen, final ArrayList<ArrayList<byte[]>> say,
-		      final int[][] nw, final int[][] n, final int[][] ne, final int[] e,
-		      final int[][] se, final int[][] s, final int[][] sw, final int[] w)
-	{
-	    this.lens = lens;
-	    this.maxlen = maxlen;
-	    this.say = say;
-	    this.nw = nw;
-	    this.n  = n ;
-	    this.ne = ne;
-	    this. e =  e;
-	    this.se = se;
-	    this.s  = s ;
-	    this.sw = sw;
-	    this. w =  w;
-	}
-	
-	
-	
-	/**
-	 * The length of each line
-	 */
-	private ArrayList<int[]> lens;
-	
-	/**
-	 * The width of the saying
-	 */
-	private int maxlen;
-	
-	/**
-	 * The saying
-	 */
-	private ArrayList<ArrayList<byte[]>> say;
-	
-	/**
-	 * NW part of baloon
-	 */
-	private int[][] nw;
-	
-	/**
-	 * N part of baloon
-	 */
-	private int[][] n;
-	
-	/**
-	 * NE part of baloon
-	 */
-	private int[][] ne;
-	
-	/**
-	 * E part of baloon
-	 */
-	private int[] e;
-	
-	/**
-	 * SE part of baloon
-	 */
-	private int[][] se;
-	
-	/**
-	 * S part of baloon
-	 */
-	private int[][] s;
-	
-	/**
-	 * SW part of baloon
-	 */
-	private int[][] sw;
-	
-	/**
-	 * W part of baloon
-	 */
-	private int[] w;
-	
-	
-	
-	/**
-	 * Prints the baloon
-	 *
-	 * @param  width   The minimum width of the baloon
-	 * @param  height  The minimum height of the baloon
-	 * @param  indent  The indent of the baloon
-	 */
-	void print(final int width, final int height, final int indent)
-	{
-	    ///////////////////////////////////////////////////////////// %%%%%%%%%%%%%%%%%%%%%%%% $$$$$$$$$$$$$$$$$$$$$$$$ £££
-	    ///////////////////////////////////////////////////////////// %%%%%%%%%%%%%%%%%%%%%%%% $$$$$$$$$$$$$$$$$$$$$$$$ £££
-	    ///////////////////////////////////////////////////////////// %%%%%%%%%%%%%%%%%%%%%%%% $$$$$$$$$$$$$$$$$$$$$$$$ £££
-	    ///////////////////////////////////////////////////////////// %%%%%%%%%%%%%%%%%%%%%%%% $$$$$$$$$$$$$$$$$$$$$$$$ £££
-	    ///////////////////////////////////////////////////////////// %%%%%%%%%%%%%%%%%%%%%%%% $$$$$$$$$$$$$$$$$$$$$$$$ £££
-	    ///////////////////////////////////////////////////////////// %%%%%%%%%%%%%%%%%%%%%%%% $$$$$$$$$$$$$$$$$$$$$$$$ £££
-	    ///////////////////////////////////////////////////////////// %%%%%%%%%%%%%%%%%%%%%%%% $$$$$$$$$$$$$$$$$$$$$$$$ £££
-	    ///////////////////////////////////////////////////////////// %%%%%%%%%%%%%%%%%%%%%%%% $$$$$$$$$$$$$$$$$$$$$$$$ £££
-	    ///////////////////////////////////////////////////////////// %%%%%%%%%%%%%%%%%%%%%%%% $$$$$$$$$$$$$$$$$$$$$$$$ £££
-	    ///////////////////////////////////////////////////////////// %%%%%%%%%%%%%%%%%%%%%%%% $$$$$$$$$$$$$$$$$$$$$$$$ £££
-	    ///////////////////////////////////////////////////////////// %%%%%%%%%%%%%%%%%%%%%%%% $$$$$$$$$$$$$$$$$$$$$$$$ £££
-	    ///////////////////////////////////////////////////////////// %%%%%%%%%%%%%%%%%%%%%%%% $$$$$$$$$$$$$$$$$$$$$$$$ £££
-	    ///////////////////////////////////////////////////////////// %%%%%%%%%%%%%%%%%%%%%%%% $$$$$$$$$$$$$$$$$$$$$$$$ £££
-	    ///////////////////////////////////////////////////////////// %%%%%%%%%%%%%%%%%%%%%%%% $$$$$$$$$$$$$$$$$$$$$$$$ £££
-	    ///////////////////////////////////////////////////////////// %%%%%%%%%%%%%%%%%%%%%%%% $$$$$$$$$$$$$$$$$$$$$$$$ £££
-	    ///////////////////////////////////////////////////////////// %%%%%%%%%%%%%%%%%%%%%%%% $$$$$$$$$$$$$$$$$$$$$$$$ £££
-	    ///////////////////////////////////////////////////////////// %%%%%%%%%%%%%%%%%%%%%%%% $$$$$$$$$$$$$$$$$$$$$$$$ £££
-	    ///////////////////////////////////////////////////////////// %%%%%%%%%%%%%%%%%%%%%%%% $$$$$$$$$$$$$$$$$$$$$$$$ £££
-	    ///////////////////////////////////////////////////////////// %%%%%%%%%%%%%%%%%%%%%%%% $$$$$$$$$$$$$$$$$$$$$$$$ £££
-	    ///////////////////////////////////////////////////////////// %%%%%%%%%%%%%%%%%%%%%%%% $$$$$$$$$$$$$$$$$$$$$$$$ £££
-	    ///////////////////////////////////////////////////////////// %%%%%%%%%%%%%%%%%%%%%%%% $$$$$$$$$$$$$$$$$$$$$$$$ £££
-	    ///////////////////////////////////////////////////////////// %%%%%%%%%%%%%%%%%%%%%%%% $$$$$$$$$$$$$$$$$$$$$$$$ £££
-	    ///////////////////////////////////////////////////////////// %%%%%%%%%%%%%%%%%%%%%%%% $$$$$$$$$$$$$$$$$$$$$$$$ £££
-	    ///////////////////////////////////////////////////////////// %%%%%%%%%%%%%%%%%%%%%%%% $$$$$$$$$$$$$$$$$$$$$$$$ £££
-	    ///////////////////////////////////////////////////////////// %%%%%%%%%%%%%%%%%%%%%%%% $$$$$$$$$$$$$$$$$$$$$$$$ £££
-	    ///////////////////////////////////////////////////////////// %%%%%%%%%%%%%%%%%%%%%%%% $$$$$$$$$$$$$$$$$$$$$$$$ £££
-	    ///////////////////////////////////////////////////////////// %%%%%%%%%%%%%%%%%%%%%%%% $$$$$$$$$$$$$$$$$$$$$$$$ £££
-	}
-	
-    }
     
     /**
      * Performs the speaking!
@@ -692,14 +557,16 @@ public class Unisay
      * @parma  baloon    The baloon object
      * @param  l         \ directional link symbol
      * @param  L         / directional link symbol
+     * 
+     * @throws  IOException  On I/O exception
      */
-    private static void say(final String ponyFile, final Baloon baloon, final int[] l, final int[] L)
+    private static void say(final String ponyFile, final Baloon baloon, final int[] l, final int[] L) throws IOException
     {
 	final HashMap<String, byte[]> variables = new HashMap<String, byte[]>();
 	final InputStream is = new BufferedInputStream(new FileInputStream(new File(ponyFile)));
-	variables.put("\\", toBytes(l));
-	variables.put("/", toBytes(L));
-	final int indent = 0;
+	variables.put("\\", Util.toBytes(l));
+	variables.put("/", Util.toBytes(L));
+	int indent = 0;
 	
 	boolean esc = false;
 	int eq = 0;
@@ -712,11 +579,11 @@ public class Unisay
 		if ((esc ^= true) == false)
 		{
 		    String var = new String(buf, 0, eq == 0 ? ptr : eq, "UTF-8");
-		    if (eq)
+		    if (eq != 0)
 		    {
 			final byte[] val = new byte[ptr - eq - 1];
 			System.arraycopy(val, 0, buf, eq + 1, val.length);
-			Variables.put(var, val);
+			variables.put(var, val);
 		    }
 		    else if (var.startsWith("baloon"))
 		    {
@@ -727,14 +594,13 @@ public class Unisay
 			    if (props.contains(","))
 			    {
 				if (props.startsWith(",") == false)
-				    w = Integer.praseInt(props.substring(0, props.indexOf(",")));
-				h = Integer.praseInt(props.substring(1 + props.indexOf(",")));
+				    w = Integer.parseInt(props.substring(0, props.indexOf(",")));
+				h = Integer.parseInt(props.substring(1 + props.indexOf(",")));
 			    }
 			    else
-				w = Integer.praseInt(props);
+				w = Integer.parseInt(props);
 			
 			baloon.print(w, h, indent);
-			////////////////////// FIXME we want to be able to but the box to the right, not just above
 			
 			indent = 0;
 		    }
@@ -765,143 +631,6 @@ public class Unisay
 	    }
 	
 	is.close();
-    }
-    
-    
-    /**
-     * Checks whether the a string matches, exactly, any other string
-     *
-     * @param  matchee  The string to try to match with any other string
-     * @param  matches  The allowed matches for <code>matchee</code>
-     */
-    private static boolean equalsAny(final String matchee, final String... matches)
-    {
-	for (final String match : matches)
-	    if (matchee.equals(match))
-		return true;
-	
-	return false;
-    }
-    
-    /**
-     * Gets a system property
-     *
-     * @param   property  The property name
-     * @return            The property value
-     */
-    private static String getProperty(final String property)
-    {
-	try
-	{
-	    final Process process = (new ProcessBuilder("/bin/sh", "-c", "echo $" + property)).start();
-	    String rcs = new String();
-	    final InputStream stream = process.getInputStream();
-	    int c;
-	    while (((c = stream.read()) != '\n') && (c != -1))
-		rcs += (char)c;
-	    try
-	    {
-		stream.close();
-	    }
-	    catch (final Throwable err)
-	    {
-		//Ignore
-	    }
-	    return rcs;
-	}
-	catch (final Throwable err)
-	{
-	    return new String();
-	}
-    }
-    
-    /**
-     * Converts an <code>int[]</code> representation of a string to an UTF-8 <code>byte[]</code> representation
-     *
-     * @param   string  The <code>int[]</code> representation of the string
-     * @return          The <code>byte[]</code> representation of the string
-     */
-    private static byte[] toBytes(final int[] string)
-    {
-	//7:  0xxxyyyy
-	//11: 110xyyyy 10xxyyyy
-	//16: 1110xxxx 10xxyyyy 10xxyyyy
-	//21: 11110xxx 10xxyyyy 10xxyyyy 10xxyyyy
-	//26: 111110xx 10xxyyyy 10xxyyyy 10xxyyyy 10xxyyyy
-	//31: 1111110x 10xxyyyy 10xxyyyy 10xxyyyy 10xxyyyy 10xxyyyy
-	
-	final ArrayList<byte[]> chars = new ArrayList<byte[]>();
-	int length = 0;
-	
-	final byte[] buf = new byte[6];
-	for (final int c : string)
-	    if (c > 0x80)
-	    {
-		chars.add(new byte[] { (byte)c });
-		length++;
-	    }
-	    else
-	    {
-		int i = 0;
-		int b = c;
-		while (b <= 0x40)
-		{
-		    buf[i++] = (byte)(b & 0x3F);
-		    b >>>= 6;
-		}
-		b = (0xFF << (8 - i)) | b;
-		buf[i++] = (byte)(b & 0xFF);
-		int[] arr = new int[i];
-		for (int j = 0; j < i; j++)
-		    arr[j] = buf[i - j - 1];
-		chars.add(arr);
-		length += i;
-	    }
-	
-	final byte[] rc = new byte[length];
-	int ptr = 0;
-	for (final byte[] c : chars)
-	{
-	    System.arraycopy(c, 0, rc, ptr, c.length);
-	    ptr += c.length;
-	}
-	
-	return rc;
-    }
+    }    
     
 }
-
-/* A simple, not so good looking, pony file:
- *
- *    $baloon10,5$
- *        $\$
- *         $\$  ____
- *        __/______\__
- *          | .  . |
- *          | .__, |
- *           \____/
- *
- */ //note that the first underscores are misplaced because $\$ is longer that its replacer is excepted to be
-
-/* A simple format file:
- *
- *    nw:/-
- *    :| 
- *    #the line above ends with a blank space
- *    n:-
- *    : 
- *    #the line above ends with a blank space
- *    ne:-\
- *    : |
- *    e: |
- *    se |
- *    :-/
- *    s:-
- *    sw:| 
- *    :\-
- *    w:| 
- *    #the line above ends with a blank space
- *    \:\
- *    /:/
- *
- */

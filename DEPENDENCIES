@@ -1,0 +1,5 @@
+sh
+# provided by bash
+
+java-runtime>=6
+# not sure how low we can go
