@@ -504,12 +504,16 @@ public class Unisay
 	    map.get("\\:").toArray(ml);   map.get("/:").toArray(mL);
 	}
 	
-	final byte[] expand = new byte[8];
-	for (int i = 0; i < 8; i++)
-	    expand[i] = ' ';
 	final ArrayList<int[]> lens = new ArrayList<int[]>();
 	final ArrayList<ArrayList<byte[]>> lines = new ArrayList<ArrayList<byte[]>>();
 	if (oneSay != null)
+	{
+	    final byte[] expand = new byte[8];
+	    for (int i = 0; i < 8; i++)
+		expand[i] = ' ';
+	    
+	    boolean esc = false;
+	    
 	    for (final String line : oneSay.split("\n"))
 	    {
 		int len = 0;
@@ -541,9 +545,25 @@ public class Unisay
 		System.arraycopy(bs, start, part, 0, m);
 		list.add(part);
 		
+		for (final byte[] chunk : list)
+		    for (final byte b : chunk)
+			if (b == 033)
+			{
+			    esc = true;
+			    len--;
+			}
+			else if (esc)
+			{
+			    len--;
+			    esc = (b != (byte)'m');
+			}
+			else if ((b & 0xC0) == 0x80)
+			    len--;
+		
 		lines.add(list);
 		lens.add(new int[] { len });
 	    }
+	}
 	else
 	{
 	    ArrayList<byte[]> list = new ArrayList<byte[]>();
@@ -568,9 +588,24 @@ public class Unisay
 		    ptr = 0;
 		    len = 0;
 		}
+		else if (d == '\t')
+		{
+		    final int exp = 8 - (len & 7);
+		    len += exp;
+		    for (int i = 0; i < exp; i++)
+		    {
+			buf[ptr++] = (byte)' ';
+			if (ptr == SIZE)
+			{
+			    list.add(buf);
+			    buf = new byte[SIZE];
+			    ptr = 0;
+			}
+		    }
+		}
 		else
 		{
-		    if ((d & 0xC0) != 0xC0)
+		    if ((d & 0xC0) != 0x80)
 			if (d == '\033')
 			    esc = true;
 			else if (!esc)
@@ -597,7 +632,45 @@ public class Unisay
 	}
 	
 	while ((lines.size() > 1) && (lines.get(lines.size() - 1).isEmpty()))
+	{
 	    lines.remove(lines.size() - 1);
+	    lens.remove(lens.size() - 1);
+	}
+	
+	/*
+	for (int i = 0, m = lines.size(); i < m; i++)
+	{
+	    int dn = 0;
+	    int d = 0;
+	    for (final byte[] chunk : lines.get(i))
+		 for (final byte b : chunk)
+		 {
+		     if ((b & 0xC0) == 0x80)
+		     {
+			 d <<= 6;
+			 d |= b & 0x3F;
+			 dn--;
+		     }
+		     else
+		     {
+			 d = b;
+			 while ((d & 128) == 128)
+			 {
+			     dn++;
+			     d <<= 1;
+			 }
+			 d &= 255;
+			 d >>= dn;
+			 dn--;
+		     }
+		     if (dn == 0)
+		     {
+			 if ((d & 0xDC00) == 0xDC00) //UTF-16 encoded character in UTF-8
+			     lens.get(i)[0]--;
+		     }
+		 }
+	}
+	*/
 	
 	int maxlen = 0;
 	for (final int[] len : lens)
