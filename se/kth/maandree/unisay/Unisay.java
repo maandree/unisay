@@ -263,9 +263,9 @@ public class Unisay
      */
     private static void start(final String... args) throws IOException
     {
-	String nw =  "/-", n = "-", ne = "-\\",
-	        w =  "| ",           e = " |",
-	       sw = "\\-", s = "-", se = "-/", l = "\\", L = "/";
+	String nw =  "/-",  n = "-", ne = "-\\",
+	        w =  "|  ",           e = "  |",
+	       sw = "\\-",  s = "-", se = "-/", l = "\\", L = "/";
 	
 	nw += "\n| ";      ne += "\n |";
 	sw = "| \n" + sw;  se = " |\n" + se;
@@ -504,16 +504,45 @@ public class Unisay
 	    map.get("\\:").toArray(ml);   map.get("/:").toArray(mL);
 	}
 	
+	final byte[] expand = new byte[8];
+	for (int i = 0; i < 8; i++)
+	    expand[i] = ' ';
 	final ArrayList<int[]> lens = new ArrayList<int[]>();
 	final ArrayList<ArrayList<byte[]>> lines = new ArrayList<ArrayList<byte[]>>();
 	if (oneSay != null)
 	    for (final String line : oneSay.split("\n"))
 	    {
+		int len = 0;
 		final byte[] bs = line.getBytes("UTF-8");
 		final ArrayList<byte[]> list = new ArrayList<byte[]>();
-		list.add(bs);
+		final int[] tabs = new int[bs.length];
+		int tabptr = 0;
+		
+		for (int i = 0, nn = bs.length; i < nn; i++)
+		    if (bs[i] == '\t')
+			tabs[tabptr++] = i;
+		
+		int start = 0;
+		for (int i = 0, nn = tabptr; i < nn; i++)
+		{
+		    final int end = tabs[i], m;
+		    final byte[] part = new byte[m = end - start];
+		    System.arraycopy(bs, start, part, 0, m);
+		    list.add(part);
+		    final byte[] exp = new byte[8 - (m & 7)]; //not associative!
+		    System.arraycopy(expand, 0, exp, 0, exp.length);
+		    list.add(exp);
+		    start = end + 1;
+		    len += (m | 7) + 1;
+		}
+		final int end = bs.length, m;
+		len += m = end - start;
+		final byte[] part = new byte[m];
+		System.arraycopy(bs, start, part, 0, m);
+		list.add(part);
+		
 		lines.add(list);
-		lens.add(new int[] { line.length() });
+		lens.add(new int[] { len });
 	    }
 	else
 	{
@@ -525,7 +554,6 @@ public class Unisay
 	    
 	    boolean esc = false;
 	    for (int d; (d = System.in.read()) != -1;)
-	    {
 		if (d == '\n')
 		{
 		    if (ptr > 0)
@@ -557,7 +585,6 @@ public class Unisay
 			ptr = 0;
 		    }
 		}
-	    }
 	    
 	    if (ptr > 0)
 	    {
