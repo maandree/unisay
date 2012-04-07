@@ -1,1 +1,7 @@
 cowsay+ponysay rewritten in Java, with added features and full Unicode(!) support.
+
+
+All ponies are cannibalised from erkin/ponysay.
+
+Note that unisay does not use same options as ponysay or cowsay,
+start with --help [OPTION] for more information.
