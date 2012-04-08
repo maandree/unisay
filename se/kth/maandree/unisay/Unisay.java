@@ -443,10 +443,10 @@ public class Unisay
 		pony.clear();
 		
 		for (final String dir : new String[] {privateDir, publicDir, privateCowDir, publicCowDir, })
-		    if ((new File(privateDir)).exists())
-			for (final String file : (new File(privateDir)).list())
+		    if ((new File(dir)).exists())
+			for (final String file : (new File(dir)).list())
 			    if (file.equals("default") == false)
-				pony.add(privateDir + file);
+				pony.add(dir + file);
 		
 		if (pony.isEmpty())
 		    onePony = null;
