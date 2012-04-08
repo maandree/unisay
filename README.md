@@ -2,7 +2,7 @@ cowsay+ponysay rewritten in Java, with added features such as
 pony quotes and full Unicode(!) support.
 
 
-![screenshot](https://github.com/maandree/unisay/raw/master/screeanshot.png)
+![screenshot](https://github.com/maandree/unisay/raw/master/screenshot.png)
 
 
 All ponies are cannibalised from [erkin/ponysay](/erkin/ponysay).
