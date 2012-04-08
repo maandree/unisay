@@ -362,7 +362,7 @@ public class Unisay
 		    for (final String file : (new File(dir)).list())
 			if (file.endsWith("~") == false)
 			{
-			    String[] ponies = file.substring(0, file.lastIndexOf('.')).split("\\+");
+			    final String[] ponies = file.substring(0, file.lastIndexOf('.')).split("\\+");
 			    for (final String p : ponies)
 				qset.add(p);
 			}
@@ -383,7 +383,7 @@ public class Unisay
 			{
 			    final ArrayList<String> values = new ArrayList<String>();
 			    values.add(dir + file);
-			    String[] ponies = file.substring(0, file.lastIndexOf('.')).split("\\+");
+			    final String[] ponies = file.substring(0, file.lastIndexOf('.')).split("\\+");
 			    for (final String p : ponies)
 				if (ponymap.containsKey(p))
 				    values.add(p);
@@ -471,8 +471,21 @@ public class Unisay
 	if (oneFormat != null)
 	    if ((new File(oneFormat)).exists() == false)
 	    {
-		System.err.println("The selected (or choosen) format file does not exist.");
-		oneFormat = null;
+		final String privateFormatDir = "~/.local/share/unisay/format/".replace("~", Util.getProperty("HOME"));
+		final String publicFormatDir  = "/usr/local/share/unisay/format/";
+		
+		final String privateFormat = privateFormatDir + oneFormat;
+		final String publicFormat = publicFormatDir + oneFormat;
+		
+		if ((new File(privateFormat)).exists())
+		    oneFormat = privateFormat;
+		else if ((new File(publicFormat)).exists())
+		    oneFormat = publicFormat;
+		else
+		{
+		    System.err.println("The selected (or choosen) format file does not exist.");
+		    oneFormat = null;
+		}
 	    }
 	
 	final int[][] mne, me, mse, ms, msw, mw, mnw, mn, ml, mL;
@@ -657,6 +670,8 @@ public class Unisay
 			    esc = true;
 			    len--;
 			}
+		        else if (b == 8)
+			    len -= 2; //damn fortune cookies!
 			else if (esc)
 			{
 			    len--;
@@ -714,7 +729,10 @@ public class Unisay
 			if (d == '\033')
 			    esc = true;
 			else if (!esc)
-			    len++;
+			    if (d == 8)
+				len--; //damn fortune cookies!
+			    else
+				len++;
 			else if (d == 'm')
 			    esc = false;
 		    buf[ptr++] = (byte)d;
