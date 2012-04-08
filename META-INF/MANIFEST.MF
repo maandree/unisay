@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Package-Version: 0.5.2
+Product-Name: Unisay
+Package-Vendor: Mattias Andrée
+Created-By: Mattias Andrée
+Main-Class: se.kth.maandree.unisay.Unisay
