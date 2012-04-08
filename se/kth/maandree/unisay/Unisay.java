@@ -278,6 +278,9 @@ public class Unisay
      */
     private static void start(final String... args) throws IOException
     {
+	final String priv = "~/.local/share/unisay/".replace("~", Util.getProperty("HOME"));
+	final String publ = "/usr/share/unisay/";
+	
 	String nw =  "/-",  n = "-", ne = "-\\",
 	        w =  "|  ",           e = "  |",
 	       sw = "\\-",  s = "-", se = "-/", l = "\\", L = "/";
@@ -337,15 +340,15 @@ public class Unisay
 	else
 	    oneSay = null; //we will catch it later
 	
-	final String privateDir    = "~/.local/share/unisay/pony/".replace("~", Util.getProperty("HOME"));
-	final String publicDir     = "/usr/local/share/unisay/pony/";
-	final String privateCowDir = "~/.local/share/unisay/cow/".replace("~", Util.getProperty("HOME"));
-	final String publicCowDir  = "/usr/local/share/unisay/cow/";
+	final String privateDir    = priv + "pony/";
+	final String publicDir     = publ + "pony/";
+	final String privateCowDir = priv + "cow/";
+	final String publicCowDir  = publ + "cow/";
 	
 	if (quote)
 	{
-	    final String privateQuotesDir = "~/.local/share/unisay/ponyquotes/".replace("~", Util.getProperty("HOME"));
-	    final String publicQuotesDir  = "/usr/local/share/unisay/ponyquotes/";
+	    final String privateQuotesDir = priv + "ponyquotes/";
+	    final String publicQuotesDir  = publ + "ponyquotes/";
 	    
 	    final HashMap<String, String> ponymap = new HashMap<String, String>();
 	    final HashSet<String> qset = new HashSet<String>();
@@ -471,11 +474,11 @@ public class Unisay
 	if (oneFormat != null)
 	    if ((new File(oneFormat)).exists() == false)
 	    {
-		final String privateFormatDir = "~/.local/share/unisay/format/".replace("~", Util.getProperty("HOME"));
-		final String publicFormatDir  = "/usr/local/share/unisay/format/";
+		final String privateFormatDir = priv + "format/";
+		final String publicFormatDir  = publ + "format/";
 		
 		final String privateFormat = privateFormatDir + oneFormat;
-		final String publicFormat = publicFormatDir + oneFormat;
+		final String publicFormat  = publicFormatDir + oneFormat;
 		
 		if ((new File(privateFormat)).exists())
 		    oneFormat = privateFormat;
