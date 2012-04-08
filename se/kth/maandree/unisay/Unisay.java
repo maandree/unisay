@@ -50,7 +50,7 @@ public class Unisay
     {
 	boolean help = false, anyarg = false;
 	boolean random = false, format = false, dash = false;
-	boolean say = false, icp = false, fcp = false, ocp = false;
+	boolean say = false, icp = false, fcp = false, ocp = false, quote = false;
 	for (final String arg : args)
 	    if (Util.equalsAny(arg, "--help", "-h"))
 		help = true;
@@ -68,7 +68,9 @@ public class Unisay
 		anyarg = fcp = true;
 	    else if (Util.equalsAny(arg, "--out-encoding", "--ocp", "--oe", "-o"))
 		anyarg = ocp = true;
-	    
+	    else if (Util.equalsAny(arg, "--pony-quotes", "--ponyquotes", "--quotes", "-q"))
+		anyarg = quote = true;
+	
 	final boolean allargs = !anyarg;
 	
 	if (help)
@@ -85,9 +87,10 @@ public class Unisay
 	    System.out.println();
 	    System.out.println("USAGE:");
 	    System.out.print("\n\n");
-	    System.out.println("  unisay [-pifos <FILE> <CP> <CP> <CP> <TEXT>] (-r | [--] <FILES...>)");
+	    System.out.println("  unisay [-pifo <FILE> <CP> <CP> <CP> <TEXT>] [-s <TEXT> | -q]");
+	    System.out.println("         (-r | [--] <FILES...>)");
 	    System.out.println();
-	    System.out.println("  -p <FILE>, -i <CP>, -f <CP>, -o <CP> and -s <TEXT>");
+	    System.out.println("  -p <FILE>, -i <CP>, -f <CP> and -o <CP>");
 	    System.out.println("  are mutally independent and may be included as you see fit.");
 	    System.out.println();
 	    System.out.println("  <FILES...> are whitespace separated files with ponys (or whatever),");
@@ -123,7 +126,8 @@ public class Unisay
 		System.out.println("  --random");
 		System.out.println("  -r");
 		System.out.println("                Use a random, instead of the user's default, pony.");
-		System.out.println("                This options is implied by specifying pony files.");
+		System.out.println("                This options is implied by specifying pony files,");
+		System.out.println("                and by using --pony-quotes.");
 	    }
 	    if (say || allargs)
 	    {
@@ -139,15 +143,26 @@ public class Unisay
 		System.out.println("                You may add this option multiple times if you");
 		System.out.println("                want one to be picked randomly.");
 	    }
+	    if (quote || allargs)
+	    {
+		System.out.print("\n\n");
+		System.out.println("  --pony-quotes");
+		System.out.println("  --ponyquotes");
+		System.out.println("  --quotes");
+		System.out.println("  -q            Will use pony quotes!");
+		System.out.println("                You may specify which pony you want a quote from,");
+		System.out.println("                by specify ponies as usual.");
+		System.out.println("                This option cannot be used with --say or stdin input.");
+	    }
 	    if (icp || allargs)
 	    {
 		System.out.print("\n\n");
 		System.out.println("  --in-encoding <CP>");
 		System.out.println("  --icp <CP>");
 		System.out.println("  --ie <CP>");
-		System.out.println("  -i <CP>      Specifies the encoding for the input from stdin.");
-		System.out.println("               UTF-8 is default.");
-		System.out.println("               <<NOT IMPLEMENTED>>");
+		System.out.println("  -i <CP>       Specifies the encoding for the input from stdin.");
+		System.out.println("                UTF-8 is default.");
+		System.out.println("                <<NOT IMPLEMENTED>>");
 	    }
 	    if (fcp || allargs)
 	    {
@@ -155,9 +170,9 @@ public class Unisay
 		System.out.println("  --file-encoding <CP>");
 		System.out.println("  --fcp <CP>");
 		System.out.println("  --fe <CP>");
-		System.out.println("  -f <CP>      Specifies the encoding of files.");
-		System.out.println("               UTF-8 is default.");
-		System.out.println("               <<NOT IMPLEMENTED>>");
+		System.out.println("  -f <CP>       Specifies the encoding of files.");
+		System.out.println("                UTF-8 is default.");
+		System.out.println("                <<NOT IMPLEMENTED>>");
 	    }
 	    if (ocp || allargs)
 	    {
@@ -165,9 +180,9 @@ public class Unisay
 		System.out.println("  --out-encoding <CP>");
 		System.out.println("  --ocp <CP>");
 		System.out.println("  --oe <CP>");
-		System.out.println("  -o <CP>      Specifies the encoding of the output from Unisay.");
-		System.out.println("               UTF-8 is default.");
-		System.out.println("               <<NOT IMPLEMENTED>>");
+		System.out.println("  -o <CP>       Specifies the encoding of the output from Unisay.");
+		System.out.println("                UTF-8 is default.");
+		System.out.println("                <<NOT IMPLEMENTED>>");
 	    }
 	    
 	    
@@ -275,6 +290,7 @@ public class Unisay
 	final ArrayList<String> pony = new ArrayList<String>();
 	final ArrayList<String> say = new ArrayList<String>();
 	
+	boolean quote = false;
 	boolean random = false;
 	boolean dash = false;
 	for (int i = 0, m = args.length; i < m; i++)
@@ -293,7 +309,15 @@ public class Unisay
 	    else if (Util.equalsAny(arg, "--format", "-p"))
 		format.add(args[++i]);
 	    else if (Util.equalsAny(arg, "--say", "-s"))
-		say.add(args[++i]);
+		if (quote)
+		    System.err.println("--pony-quotes and but be used togather with --say");
+		else
+		    say.add(args[++i]);
+	    else if (Util.equalsAny(arg, "--pony-quotes", "--ponyquotes", "--quotes", "-q"))
+		if (say.isEmpty() == false)
+		    System.err.println("--pony-quotes and but be used togather with --say");
+		else
+		    quote = true;
 	    else if (arg.startsWith("-"))
 	    {
 		System.err.println("Unrecognised option, assuming it is a pony file: " + arg);
@@ -303,52 +327,133 @@ public class Unisay
 		pony.add(arg);
 	}
 	
-	final String oneSay;
-	final String onePony;
+	String oneSay;
+	String onePony;
 	String oneFormat;
+	InputStream sayfeed = System.in;
 	
 	if (say.isEmpty() == false)
 	    oneSay = say.get((int)(Math.random() * say.size()));
 	else
 	    oneSay = null; //we will catch it later
 	
-	if (pony.isEmpty() == false)
-	    onePony = pony.get((int)(Math.random() * pony.size()));
+	final String privateDir    = "~/.local/share/unisay/pony/".replace("~", Util.getProperty("HOME"));
+	final String publicDir     = "/usr/local/share/unisay/pony/";
+	final String privateCowDir = "~/.local/share/unisay/cow/".replace("~", Util.getProperty("HOME"));
+	final String publicCowDir  = "/usr/local/share/unisay/cow/";
+	
+	if (quote)
+	{
+	    final String privateQuotesDir = "~/.local/share/unisay/ponyquotes/".replace("~", Util.getProperty("HOME"));
+	    final String publicQuotesDir  = "/usr/local/share/unisay/ponyquotes/";
+	    
+	    final HashMap<String, String> ponymap = new HashMap<String, String>();
+	    final HashSet<String> qset = new HashSet<String>();
+	    final HashSet<String> pset = new HashSet<String>();
+	    
+	    for (final String p : pony)
+		if (p.contains("/"))
+		    pset.add(p.substring(p.lastIndexOf('/') + 1));
+		else
+		    pset.add(p);
+	    
+	    for (final String dir : new String[] {publicQuotesDir, privateQuotesDir, })
+		if ((new File(dir)).exists())
+		    for (final String file : (new File(dir)).list())
+			if (file.endsWith("~") == false)
+			{
+			    String[] ponies = file.substring(0, file.lastIndexOf('.')).split("\\+");
+			    for (final String p : ponies)
+				qset.add(p);
+			}
+	    
+	    for (final String dir : new String[] {publicDir, privateDir, })
+		if ((new File(dir)).exists())
+		    for (final String file : (new File(dir)).list())
+			if ((file.equals("default") == false) && (qset.contains(file)))
+			    if (pony.isEmpty() || (pset.contains(file)))
+				ponymap.put(file, dir + file);
+	    
+	    final ArrayList<ArrayList<String>> qlist = new ArrayList<ArrayList<String>>();
+	    
+	    for (final String dir : new String[] {publicQuotesDir, privateQuotesDir, })
+		if ((new File(dir)).exists())
+		    for (final String file : (new File(dir)).list())
+			if (file.endsWith("~") == false)
+			{
+			    final ArrayList<String> values = new ArrayList<String>();
+			    values.add(dir + file);
+			    String[] ponies = file.substring(0, file.lastIndexOf('.')).split("\\+");
+			    for (final String p : ponies)
+				if (ponymap.containsKey(p))
+				    values.add(p);
+			    if (values.size() > 1)
+				qlist.add(values);
+			}
+	    
+	    final ArrayList<String> q = qlist.get(((int)(Math.random() * qlist.size())) % qlist.size());
+	    final String qp = q.get(1 + ((int)(Math.random() * (q.size() - 1))) % (q.size() - 1));
+	    final String qq = q.get(0);
+	    
+	    onePony = ponymap.get(qp);
+	    oneSay = null;
+	    sayfeed = new BufferedInputStream(new FileInputStream(new File(qq)));
+	}
+	else if (pony.isEmpty() == false)
+	{
+	    onePony = pony.get(((int)(Math.random() * pony.size())) % pony.size());
+	    
+	    if ((new File(onePony)).exists() == false)
+	    {
+		final String privatePony    = privateDir    + onePony;
+		final String publicPony     = publicDir     + onePony;
+		final String privateCowPony = privateCowDir + onePony;
+		final String publicCowPony  = publicCowDir  + onePony;
+		
+		if ((new File(privatePony)).exists())
+		    onePony = privatePony;
+		else if ((new File(publicPony)).exists())
+		    onePony = publicPony;
+		else if ((new File(privateCowPony)).exists())
+		    onePony = privateCowPony;
+		else if ((new File(publicCowPony)).exists())
+		    onePony = publicCowPony;
+	    }
+	}
 	else
 	{
-	    final String privateDir = "~/.local/share/unisay/pony/".replace("~", Util.getProperty("HOME"));
-	    final String publicDir  = "/usr/local/share/unisay/pony/";
-	    
-	    final String privateDefault = privateDir + "default";
-	    final String publicDefault  = publicDir  + "default";
+	    final String privateDefault    = privateDir    + "default";
+	    final String publicDefault     = publicDir     + "default";
+	    final String privateCowDefault = privateCowDir + "default";
+	    final String publicCowDefault  = publicCowDir  + "default";
 	    
 	    if ((new File(privateDefault)).exists() && !random)
 		onePony = privateDefault;
 	    else if ((new File(publicDefault)).exists() && !random)
 		onePony = publicDefault;
+	    else if ((new File(privateCowDefault)).exists() && !random)
+		onePony = privateCowDefault;
+	    else if ((new File(publicCowDefault)).exists() && !random)
+		onePony = publicCowDefault;
 	    else
 	    {
 		pony.clear();
 		
-		if ((new File(privateDir)).exists())
-		    for (final String file : (new File(privateDir)).list())
-			if (file.equals("default") == false)
-			    pony.add(privateDir + file);
-		
-		if ((new File(publicDir)).exists())
-		    for (final String file : (new File(publicDir)).list())
-			if (file.equals("default") == false)
-			    pony.add(publicDir + file);
+		for (final String dir : new String[] {privateDir, publicDir, privateCowDir, publicCowDir, })
+		    if ((new File(privateDir)).exists())
+			for (final String file : (new File(privateDir)).list())
+			    if (file.equals("default") == false)
+				pony.add(privateDir + file);
 		
 		if (pony.isEmpty())
 		    onePony = null;
 		else
-		    onePony = pony.get((int)(Math.random() * pony.size()));
+		    onePony = pony.get(((int)(Math.random() * pony.size())) % pony.size());
 	    }
 	}
 	
 	if (format.isEmpty() == false)
-	    oneFormat = format.get((int)(Math.random() * format.size()));
+	    oneFormat = format.get(((int)(Math.random() * format.size())) % format.size());
 	else
 	    oneFormat = null;
 	
@@ -573,7 +678,7 @@ public class Unisay
 	    int len = 0;
 	    
 	    boolean esc = false;
-	    for (int d; (d = System.in.read()) != -1;)
+	    for (int d; (d = sayfeed.read()) != -1;)
 		if (d == '\n')
 		{
 		    if (ptr > 0)
@@ -620,6 +725,9 @@ public class Unisay
 			ptr = 0;
 		    }
 		}
+	    
+	    if (sayfeed != System.in)
+		sayfeed.close();
 	    
 	    if (ptr > 0)
 	    {
