@@ -6,6 +6,8 @@ pony quotes and full Unicode(!) support.
 
 
 All ponies are cannibalised from [erkin/ponysay](/erkin/ponysay),
+except from the prototypes ponies in the catalogue
+newponies, which are cannibalised from [svenstaro/qponies](/svenstaro/qponies),
 and all cows are cannibalised from cowsay.
 
 Note that unisay does not use same options as ponysay or cowsay,
