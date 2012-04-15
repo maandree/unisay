@@ -151,7 +151,6 @@ public class img2unisay
 		pony[y] = emptyset;
 	
 	pony[h] = emptyset;
-	h++;
 	
 	int fore = -1;
 	int back = -1;
