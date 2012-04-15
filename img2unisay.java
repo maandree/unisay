@@ -217,7 +217,7 @@ public class img2unisay
 		{
 		    if (back >= 0)  System.out.print("\033[49m");
 		    back = -1;
-		    if (fore != lower)
+		    if (fore != upper)
 			System.out.print("\033[38;5;" + (fore = upper) + "m");
 		    System.out.print('▀');
 		}
