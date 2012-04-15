@@ -55,14 +55,16 @@ public class img2unisay
      */
     public static void main(final String... args) throws IOException
     {
-	if (args.length != 1)
+	if (args.length == 0)
 	{
 	    System.out.println("Image to unisay convertion tool");
 	    System.out.println();
-	    System.out.println("USAGE:  image2unisay SOURCE > TARGET");
+	    System.out.println("USAGE:  img2unisay [-2] [--] SOURCE > TARGET");
 	    System.out.println();
 	    System.out.println("Source:          Image file");
 	    System.out.println("Target (STDOUT): File name for new unisay pony");
+	    System.out.println();
+	    System.out.println("-2  Input image have double dimensioned pixels.");
 	    System.out.println();
 	    System.out.println("Known supported input formats:");
 	    System.out.println("  ⋅  PNG  (non-animated)");
@@ -88,11 +90,25 @@ public class img2unisay
 	    return;
 	}
 	
-	final PrintStream out = System.out;
-	final BufferedImage img = ImageIO.read(new File(args[0]));
+	int ai = 0;
+	int ps = 1;
 	
-	int w = img.getWidth();
-	int h = img.getHeight();
+	if (args[ai].equals("-2"))
+	{
+	    ai++;
+	    ps = 2;
+	}
+	
+	if (args[ai].equals("--"))
+	    ai++;
+	
+	String file = args[ai++];
+	
+	final PrintStream out = System.out;
+	final BufferedImage img = ImageIO.read(new File(file));
+	
+	int w = img.getWidth() / ps;
+	int h = img.getHeight() / ps;
 	
 	int maxx = 0;
 	int minx = w;
@@ -107,7 +123,7 @@ public class img2unisay
 	    boolean empty = true;
 	    for (int x = 0; x < w; x++)
 	    {
-		final int argb = img.getRGB(x, y);
+		final int argb = img.getRGB(x * ps, y * ps);
 		int a = (argb >> 24) & 0xFF;
 		int r = (argb >> 16) & 0xFF;
 		int g = (argb >>  8) & 0xFF;
