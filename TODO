@@ -4,5 +4,8 @@ Bug hunt!
 Event remainders (countdown)
 Autocolouring
 Baloon to the right
+--cows or -C     cows only
+--ponies or -P   ponies only
+--all or -A      every character
 Bash completion
 Info manual
