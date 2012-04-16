@@ -87,6 +87,7 @@ public class unisay2ponysay
 	final PrintStream out = System.out;
 	
 	final HashMap<String, String> vars = new HashMap<String, String>();
+	vars.put("", "$");
 	
 	out.println("$the_cow =<<EOC;");
 	String buf = null;
