@@ -1,5 +1,5 @@
 /**
- * image2unisay — ponysay to unisay pony convertion tool
+ * img2unisay — ponysay to unisay pony convertion tool
  *
  * Copyright © 2012  Mattias Andrée (maandree@kth.se)
  *
@@ -16,6 +16,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
+package se.kth.maandree.utilunisay;
+
 import javax.imageio.*;
 import java.awt.*;
 import java.awt.image.*;
