@@ -39,12 +39,6 @@ public class unisay2ponysay
     
     
     
-    private static final ArrayList<int[]> pre = new ArrayList<int[]>();
-    private static int[] prebuf = null;
-    private static int preptr = 0;
-    
-    
-    
     /**
      * This is the main entry point of the program
      * 
