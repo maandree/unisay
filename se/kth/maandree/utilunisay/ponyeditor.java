@@ -65,6 +65,7 @@ public class ponyeditor
 	    System.out.println( "    enter    Insert new row");
 	    System.out.println( "   delete    Delete row");
 	    System.out.println( "       ^H    Delete cell");
+	    System.out.println( "        +    Insert new cell");
 	    System.out.println( "        b    Insert baloon");
 	    System.out.println( "        e    Remove one row from the baloon");
 	    System.out.println( "        d    Add one row to the baloon");
