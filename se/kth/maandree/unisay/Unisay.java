@@ -49,7 +49,7 @@ public class Unisay
     public static void main(final String... args) throws IOException
     {
 	boolean help = false, anyarg = false;
-	boolean random = false, format = false, dash = false;
+	boolean random = false, format = false, dash = false, notranc = false;
 	boolean say = false, icp = false, fcp = false, ocp = false, quote = false;
 	for (final String arg : args)
 	    if (Util.equalsAny(arg, "--help", "-h"))
@@ -264,7 +264,108 @@ public class Unisay
 	    return;
 	}
 	
+	final int width = notranc ? Util.getWidth() : -1;
+	if (width > 15) //sanity
+	{
+	    final OutputStream stdout = new BufferedOutputStream(System.out);
+	    final OutputStream out = new OutputStream()
+		    {
+			/**
+			 * The number of column on the current line
+			 */
+			private int x = 0;
+			
+			/**
+			 * Escape sequence state
+			 */
+			private int esc = 0;
+			
+			private boolean ok = true;
+			
+			
+			/**
+			 * {@inheritDoc}
+			 */
+			@Override
+			public void write(final int b) throws IOException
+			{
+			    if (this.esc == 0)
+			    {
+				if (b == '\n')
+				{
+				    if (x >= width)
+				    {
+					write('\033');
+					write('[');
+					write('4');
+					write('9');
+					write('m');
+				    }
+				    this.x = -1;
+				}
+				else if (b == '\t')
+				{
+				    int nx = 8 - (x & 7);
+				    for (int i = 0; i < nx; i++)
+					write(' ');
+				    return; //(!)
+				}
+				else if (b == '\033')
+				    this.esc = 1;
+			    }
+			    else if (this.esc == 1)
+			    {
+				if      (b == '[')  this.esc = 2;
+				else if (b == ']')  this.esc = 3;
+				else                this.esc = 10;
+			    }
+			    else if (this.esc == 2)
+			    {
+				if ((('a' <= b) && (b <= 'z')) || (('A' <= b) && (b <= 'Z')))
+				    this.esc = 10;
+			    }
+			    else if ((this.esc == 3) && (b == 'P'))
+			    {
+				this.esc = ~0;
+			    }
+			    else if (this.esc < 0)
+			    {
+				this.esc--;
+				if (this.esc == ~7)
+				    this.esc = 10;
+			    }
+			    else
+				this.esc = 10;
+			    
+			    if ((x < width) || (this.esc != 0) || (ok && ((b & 0xC0) == 0x80)))
+			    {
+				stdout.write(b);
+				if (this.esc == 0)
+				    if ((b & 0xC0) != 0x80)
+					x++;
+				ok = true;
+			    }
+			    else
+				ok = false;
+			    if (this.esc == 10)
+				this.esc = 0;
+			}
+			
+			/**
+			 * {@inheritDoc}
+			 */
+			@Override
+			public void flush() throws IOException
+			{
+			    stdout.flush();
+			}
+		    };
+	    
+	    System.setOut(new PrintStream(out));
+	}
+	
 	start(args);
+	System.out.flush();
     }
     
     
@@ -341,14 +442,14 @@ public class Unisay
 	    oneSay = null; //we will catch it later
 	
 	final String privateDir    = priv + "pony/";
-	final String publicDir     = publ + "pony/";
+	final String  publicDir    = publ + "pony/";
 	final String privateCowDir = priv + "cow/";
-	final String publicCowDir  = publ + "cow/";
+	final String  publicCowDir = publ + "cow/";
 	
 	if (quote)
 	{
 	    final String privateQuotesDir = priv + "ponyquotes/";
-	    final String publicQuotesDir  = publ + "ponyquotes/";
+	    final String  publicQuotesDir = publ + "ponyquotes/";
 	    
 	    final HashMap<String, String> ponymap = new HashMap<String, String>();
 	    final HashSet<String> qset = new HashSet<String>();
@@ -409,35 +510,27 @@ public class Unisay
 	    if ((new File(onePony)).exists() == false)
 	    {
 		final String privatePony    = privateDir    + onePony;
-		final String publicPony     = publicDir     + onePony;
+		final String  publicPony    =  publicDir    + onePony;
 		final String privateCowPony = privateCowDir + onePony;
-		final String publicCowPony  = publicCowDir  + onePony;
+		final String  publicCowPony =  publicCowDir + onePony;
 		
-		if ((new File(privatePony)).exists())
-		    onePony = privatePony;
-		else if ((new File(publicPony)).exists())
-		    onePony = publicPony;
-		else if ((new File(privateCowPony)).exists())
-		    onePony = privateCowPony;
-		else if ((new File(publicCowPony)).exists())
-		    onePony = publicCowPony;
+		if      ((new File(privatePony   )).exists())  onePony = privatePony;
+		else if ((new File( publicPony   )).exists())  onePony =  publicPony;
+		else if ((new File(privateCowPony)).exists())  onePony = privateCowPony;
+		else if ((new File( publicCowPony)).exists())  onePony =  publicCowPony;
 	    }
 	}
 	else
 	{
 	    final String privateDefault    = privateDir    + "default";
-	    final String publicDefault     = publicDir     + "default";
+	    final String  publicDefault    =  publicDir    + "default";
 	    final String privateCowDefault = privateCowDir + "default";
-	    final String publicCowDefault  = publicCowDir  + "default";
+	    final String  publicCowDefault =  publicCowDir + "default";
 	    
-	    if ((new File(privateDefault)).exists() && !random)
-		onePony = privateDefault;
-	    else if ((new File(publicDefault)).exists() && !random)
-		onePony = publicDefault;
-	    else if ((new File(privateCowDefault)).exists() && !random)
-		onePony = privateCowDefault;
-	    else if ((new File(publicCowDefault)).exists() && !random)
-		onePony = publicCowDefault;
+	    if      ((new File(privateDefault   )).exists() && !random)  onePony = privateDefault;
+	    else if ((new File( publicDefault   )).exists() && !random)	 onePony =  publicDefault;
+	    else if ((new File(privateCowDefault)).exists() && !random)  onePony = privateCowDefault;
+	    else if ((new File( publicCowDefault)).exists() && !random)  onePony =  publicCowDefault;
 	    else
 	    {
 		pony.clear();
@@ -475,15 +568,13 @@ public class Unisay
 	    if ((new File(oneFormat)).exists() == false)
 	    {
 		final String privateFormatDir = priv + "format/";
-		final String publicFormatDir  = publ + "format/";
+		final String  publicFormatDir = publ + "format/";
 		
 		final String privateFormat = privateFormatDir + oneFormat;
-		final String publicFormat  = publicFormatDir + oneFormat;
+		final String  publicFormat =  publicFormatDir + oneFormat;
 		
-		if ((new File(privateFormat)).exists())
-		    oneFormat = privateFormat;
-		else if ((new File(publicFormat)).exists())
-		    oneFormat = publicFormat;
+		if      ((new File(privateFormat)).exists())  oneFormat = privateFormat;
+		else if ((new File( publicFormat)).exists())  oneFormat =  publicFormat;
 		else
 		{
 		    System.err.println("The selected (or choosen) format file does not exist.");

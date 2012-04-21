@@ -87,6 +87,37 @@ public class Util
     }
     
     /**
+     * Gets the width of the terminal
+     *
+     * @return  The width of the terminal
+     */
+    public static int getWidth()
+    {
+	try
+	{
+	    final Process process = (new ProcessBuilder("/bin/sh", "-c", "tput cols 2> " + (new File("/dev/stderr")).getCanonicalPath())).start();
+	    String rcs = new String();
+	    final InputStream stream = process.getInputStream();
+	    int c;
+	    while (((c = stream.read()) != '\n') && (c != -1))
+		rcs += (char)c;
+	    try
+	    {
+		stream.close();
+	    }
+	    catch (final Throwable err)
+	    {
+		//Ignore
+	    }
+	    return Integer.parseInt(rcs);
+	}
+	catch (final Throwable err)
+	{
+	    return 0;
+	}
+    }
+    
+    /**
      * Converts an <code>int</code> representation of a character to an UTF-8 <code>byte[]</code> representation
      *
      * @param   character  The <code>int</code> representation of the character
