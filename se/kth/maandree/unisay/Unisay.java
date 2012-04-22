@@ -73,13 +73,11 @@ public class Unisay
 	if (help)
 	{
 	    System.out.println("unisay is a message and fortune displaying program inspired heavily by");
-	    System.out.println("cowsay, and comes with adapted images from cowsay and ponysay; the later");
-	    System.out.println("uses the former.  The most importent thing about unisay, beside that it");
-	    System.out.println("comes with the 'My Little Ponies' from ponysay is that it supports UCS");
-	    System.out.println("(\"Unicode\") fully in all aspects (except you may encounter some problems");
-	    System.out.println("with high-plane characters if used on startup arguments or file names)");
-	    System.out.println("trough UTF-8 and other UTF, which was an issue with cowsay and ponysay;");
-	    System.out.println("but it also includes some sugar.");
+	    System.out.println("cowsay, and comes with adapted images from cowsay, ponysay (from qponies),");
+	    System.out.println("and qponies. The most important thing about unisay, beside that it cows");
+	    System.out.println("with the 'My Little Ponies' from ponysay is that it supports UCS (\"Unicode\")");
+	    System.out.println("fully in all aspects through UTF-8 and other UTF, which was an issue with");
+	    System.out.println("cowsay and ponysay (wraps cowsay); but it also includes some sugar.");
 	    System.out.println();
 	    System.out.println();
 	    System.out.println("USAGE:");
