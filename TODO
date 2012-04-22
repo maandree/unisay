@@ -1,8 +1,3 @@
-fetch and document --no-truncate --notruncate --notrunc -T
---cows or -C     cows only
---ponies or -P   ponies only
---all or -A      every character
-
 Pony editor (terminal)
 Bug hunt!
 Event remainders (countdown)
@@ -12,7 +7,7 @@ Pony alterntives for different termial caps
      -256 colours
      -16 colours
      -8 colours
-     -24-bit colours (^]Pnrrggbb)
+     -24-bit colours (^[]Pnrrggbb)
      -no block elements
 Bash completion
 Info manual

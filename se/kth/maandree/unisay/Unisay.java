@@ -49,27 +49,24 @@ public class Unisay
     public static void main(final String... args) throws IOException
     {
 	boolean help = false, anyarg = false;
-	boolean random = false, format = false, dash = false, notranc = false;
+	boolean random = false, format = false, dash = false, notrunc = false;
 	boolean say = false, icp = false, fcp = false, ocp = false, quote = false;
+	boolean cows = false, ponies = false, all = false;
+	
 	for (final String arg : args)
-	    if (Util.equalsAny(arg, "--help", "-h"))
-		help = true;
-	    else if (Util.equalsAny(arg, "--"))
-		anyarg = dash = true;
-	    else if (Util.equalsAny(arg, "--random", "-r"))
-		anyarg = random = true;
-	    else if (Util.equalsAny(arg, "--format", "-p"))
-		anyarg = format = true;
-	    else if (Util.equalsAny(arg, "--say", "-s"))
-		anyarg = say = true;
-	    else if (Util.equalsAny(arg, "--in-encoding", "--icp", "--ie", "-i"))
-		anyarg = icp = true;
-	    else if (Util.equalsAny(arg, "--file-encoding", "--fcp", "--fe", "-f"))
-		anyarg = fcp = true;
-	    else if (Util.equalsAny(arg, "--out-encoding", "--ocp", "--oe", "-o"))
-		anyarg = ocp = true;
-	    else if (Util.equalsAny(arg, "--pony-quotes", "--ponyquotes", "--quotes", "-q"))
-		anyarg = quote = true;
+	    if      (Util.equalsAny(arg, "--help", "-h"))                                                help    = true;
+	    else if (Util.equalsAny(arg, "--"))                                                 anyarg = dash    = true;
+	    else if (Util.equalsAny(arg, "--random", "-r"))                                     anyarg = random  = true;
+	    else if (Util.equalsAny(arg, "--format", "-p"))                                     anyarg = format  = true;
+	    else if (Util.equalsAny(arg, "--say", "-s"))                                        anyarg = say     = true;
+	    else if (Util.equalsAny(arg, "--pony-quotes", "--ponyquotes", "--quotes", "-q"))    anyarg = quote   = true;
+	    else if (Util.equalsAny(arg, "--no-truncate", "--notruncate", "--notrunc", "-T"))   anyarg = notrunc = true;
+	    else if (Util.equalsAny(arg, "--cows", "-C"))                                       anyarg = cows    = true;
+	    else if (Util.equalsAny(arg, "--ponies", "-P"))                                     anyarg = ponies  = true;
+	    else if (Util.equalsAny(arg, "--all", "-A"))                                        anyarg = all     = true;
+	    else if (Util.equalsAny(arg, "--in-encoding", "--icp", "--ie", "-i"))               anyarg = icp     = true;
+	    else if (Util.equalsAny(arg, "--file-encoding", "--fcp", "--fe", "-f"))             anyarg = fcp     = true;
+	    else if (Util.equalsAny(arg, "--out-encoding", "--ocp", "--oe", "-o"))              anyarg = ocp     = true;
 	
 	final boolean allargs = !anyarg;
 	
@@ -87,10 +84,10 @@ public class Unisay
 	    System.out.println();
 	    System.out.println("USAGE:");
 	    System.out.print("\n\n");
-	    System.out.println("  unisay [-pifo <FILE> <CP> <CP> <CP> <TEXT>] [-s <TEXT> | -q]");
+	    System.out.println("  unisay [-pifoTCPA <FILE> <CP> <CP> <CP> <TEXT>] [-s <TEXT> | -q]");
 	    System.out.println("         (-r | [--] <FILES...>)");
 	    System.out.println();
-	    System.out.println("  -p <FILE>, -i <CP>, -f <CP> and -o <CP>");
+	    System.out.println("  -p <FILE>, -i <CP>, -f <CP>, -o <CP>, -T, -C, -P and -A");
 	    System.out.println("  are mutally independent and may be included as you see fit.");
 	    System.out.println();
 	    System.out.println("  <FILES...> are whitespace separated files with ponys (or whatever),");
@@ -153,6 +150,37 @@ public class Unisay
 		System.out.println("                You may specify which pony you want a quote from,");
 		System.out.println("                by specify ponies as usual.");
 		System.out.println("                This option cannot be used with --say or stdin input.");
+	    }
+	    if (notrunc || allargs)
+	    {
+		System.out.print("\n\n");
+		System.out.println("  --no-truncate");
+		System.out.println("  --notruncate");
+		System.out.println("  --notrunc");
+		System.out.println("  -T            Do not truncate the pony to the width of the terminal.");
+		System.out.println("                The width of the terminal is determined by stderr using tput.");
+	    }
+	    if (cows || allargs)
+	    {
+		System.out.print("\n\n");
+		System.out.println("  --Cows");
+		System.out.println("  -C");
+		System.out.println("                Use only (unless another class is specified) cows.");
+	    }
+	    if (ponies || allargs)
+	    {
+		System.out.print("\n\n");
+		System.out.println("  --Ponies");
+		System.out.println("  -P");
+		System.out.println("                Use only (unless another class is specified) ponies.");
+	    }
+	    if (all || allargs)
+	    {
+		System.out.print("\n\n");
+		System.out.println("  --all");
+		System.out.println("  -A");
+		System.out.println("                Use all images; both cows and ponies.");
+		System.out.println("                This option is default.");
 	    }
 	    if (icp || allargs)
 	    {
@@ -264,7 +292,7 @@ public class Unisay
 	    return;
 	}
 	
-	final int width = notranc ? Util.getWidth() : -1;
+	final int width = notrunc ? Util.getWidth() : -1;
 	if (width > 15) //sanity
 	{
 	    final OutputStream stdout = new BufferedOutputStream(System.out);
@@ -280,6 +308,9 @@ public class Unisay
 			 */
 			private int esc = 0;
 			
+			/**
+			 * Last bytes as written
+			 */
 			private boolean ok = true;
 			
 			
@@ -397,31 +428,25 @@ public class Unisay
 	boolean quote = false;
 	boolean random = false;
 	boolean dash = false;
+	boolean useCows = false;
+	boolean usePonies = false;
+	
 	for (int i = 0, m = args.length; i < m; i++)
         {
 	    final String arg = args[i];
 	    
-	    if (dash)
-		pony.add(arg);
-	    else if (Util.equalsAny(arg, "--"))
-		dash = true;
-	    else if (Util.equalsAny(arg, "--random", "-r"))
-		if (random)
-		    System.err.println("--random (-r) should only be used once.");
-		else
-		    random = true;
-	    else if (Util.equalsAny(arg, "--format", "-p"))
-		format.add(args[++i]);
-	    else if (Util.equalsAny(arg, "--say", "-s"))
-		if (quote)
-		    System.err.println("--pony-quotes and but be used togather with --say");
-		else
-		    say.add(args[++i]);
-	    else if (Util.equalsAny(arg, "--pony-quotes", "--ponyquotes", "--quotes", "-q"))
-		if (say.isEmpty() == false)
-		    System.err.println("--pony-quotes and but be used togather with --say");
-		else
-		    quote = true;
+	    if (dash)                                                                                                      pony.add(arg);
+	    else if (Util.equalsAny(arg, "--"))                                                                            dash = true;
+	    else if (Util.equalsAny(arg, "--random", "-r"))                                   if (random)                  System.err.println("--random (-r) should only be used once.");
+		                                                                              else                         random = true;
+	    else if (Util.equalsAny(arg, "--format", "-p"))                                                                format.add(args[++i]);
+	    else if (Util.equalsAny(arg, "--say", "-s"))                                      if (quote)                   System.err.println("--pony-quotes and but be used togather with --say");
+		                                                                              else                         say.add(args[++i]);
+	    else if (Util.equalsAny(arg, "--pony-quotes", "--ponyquotes", "--quotes", "-q"))  if (say.isEmpty() == false)  System.err.println("--pony-quotes and but be used togather with --say");
+		                                                                              else                         quote = true;
+	    else if (Util.equalsAny(arg, "--cows", "-C"))                                                                  useCows = true;
+	    else if (Util.equalsAny(arg, "--ponies", "-P"))                                                                usePonies = true;
+	    else if (Util.equalsAny(arg, "--all", "-A"))                                                                   usePonies = useCows = true;
 	    else if (arg.startsWith("-"))
 	    {
 		System.err.println("Unrecognised option, assuming it is a pony file: " + arg);
@@ -430,6 +455,9 @@ public class Unisay
 	    else
 		pony.add(arg);
 	}
+	
+	if ((useCows || usePonies) == false)
+	    useCows = usePonies = true;
 	
 	String oneSay;
 	String onePony;
@@ -471,12 +499,21 @@ public class Unisay
 				qset.add(p);
 			}
 	    
-	    for (final String dir : new String[] {publicDir, privateDir, })
-		if ((new File(dir)).exists())
-		    for (final String file : (new File(dir)).list())
-			if ((file.equals("default") == false) && (qset.contains(file)))
-			    if (pony.isEmpty() || (pset.contains(file)))
-				ponymap.put(file, dir + file);
+	    if (usePonies)
+		for (final String dir : new String[] {publicDir, privateDir, })
+		    if ((new File(dir)).exists())
+			for (final String file : (new File(dir)).list())
+			    if ((file.equals("default") == false) && (qset.contains(file)))
+				if (pony.isEmpty() || (pset.contains(file)))
+				    ponymap.put(file, dir + file);
+	    
+	    if (useCows)
+		for (final String dir : new String[] {publicCowDir, privateCowDir, })
+		    if ((new File(dir)).exists())
+			for (final String file : (new File(dir)).list())
+			    if ((file.equals("default") == false) && (qset.contains(file)))
+				if (pony.isEmpty() || (pset.contains(file)))
+				    ponymap.put(file, dir + file);
 	    
 	    final ArrayList<ArrayList<String>> qlist = new ArrayList<ArrayList<String>>();
 	    
@@ -514,10 +551,10 @@ public class Unisay
 		final String privateCowPony = privateCowDir + onePony;
 		final String  publicCowPony =  publicCowDir + onePony;
 		
-		if      ((new File(privatePony   )).exists())  onePony = privatePony;
-		else if ((new File( publicPony   )).exists())  onePony =  publicPony;
-		else if ((new File(privateCowPony)).exists())  onePony = privateCowPony;
-		else if ((new File( publicCowPony)).exists())  onePony =  publicCowPony;
+		if      (usePonies && (new File(privatePony   )).exists())  onePony = privatePony;
+		else if (usePonies && (new File( publicPony   )).exists())  onePony =  publicPony;
+		else if (useCows   && (new File(privateCowPony)).exists())  onePony = privateCowPony;
+		else if (useCows   && (new File( publicCowPony)).exists())  onePony =  publicCowPony;
 	    }
 	}
 	else
@@ -527,19 +564,27 @@ public class Unisay
 	    final String privateCowDefault = privateCowDir + "default";
 	    final String  publicCowDefault =  publicCowDir + "default";
 	    
-	    if      ((new File(privateDefault   )).exists() && !random)  onePony = privateDefault;
-	    else if ((new File( publicDefault   )).exists() && !random)	 onePony =  publicDefault;
-	    else if ((new File(privateCowDefault)).exists() && !random)  onePony = privateCowDefault;
-	    else if ((new File( publicCowDefault)).exists() && !random)  onePony =  publicCowDefault;
+	    if      (usePonies && (new File(privateDefault   )).exists() && !random)  onePony = privateDefault;
+	    else if (usePonies && (new File( publicDefault   )).exists() && !random)  onePony =  publicDefault;
+	    else if (useCows   && (new File(privateCowDefault)).exists() && !random)  onePony = privateCowDefault;
+	    else if (useCows   && (new File( publicCowDefault)).exists() && !random)  onePony =  publicCowDefault;
 	    else
 	    {
 		pony.clear();
 		
-		for (final String dir : new String[] {privateDir, publicDir, privateCowDir, publicCowDir, })
-		    if ((new File(dir)).exists())
-			for (final String file : (new File(dir)).list())
-			    if (file.equals("default") == false)
-				pony.add(dir + file);
+		if (usePonies)
+		    for (final String dir : new String[] {privateDir, publicDir, })
+			if ((new File(dir)).exists())
+			    for (final String file : (new File(dir)).list())
+				if (file.equals("default") == false)
+				    pony.add(dir + file);
+		
+		if (useCows)
+		    for (final String dir : new String[] {privateCowDir, publicCowDir, })
+			if ((new File(dir)).exists())
+			    for (final String file : (new File(dir)).list())
+				if (file.equals("default") == false)
+				    pony.add(dir + file);
 		
 		if (pony.isEmpty())
 		    onePony = null;
