@@ -5,10 +5,9 @@ pony quotes and full Unicode(!) support.
 ![screenshot](https://github.com/maandree/unisay/raw/master/screenshot.png)
 
 
-All ponies are cannibalised from [erkin/ponysay](/erkin/ponysay),
-except from the prototypes ponies in the catalogue
-newponies, which are cannibalised from [svenstaro/qponies](/svenstaro/qponies),
-and all cows are cannibalised from cowsay.
+All ponies are cannibalised from [erkin/ponysay](/erkin/ponysay)
+and [svenstaro/qponies](/svenstaro/qponies), and all cows are
+cannibalised from cowsay.
 
 Note that unisay does not use same options as ponysay or cowsay,
 start with --help for more information, with or without options.
