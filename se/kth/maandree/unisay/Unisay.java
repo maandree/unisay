@@ -283,7 +283,7 @@ public class Unisay
 	    System.out.println();
 	    System.out.println();
 	    System.out.println("Neither cowsay or ponysay nor way other program was cannibalised,");
-	    System.out.println("but I did cannibalise all ponies and eat some delicous pancake\"let\"s.");
+	    System.out.println("but I did cannibalise ponies and eat some delicous pancake\"let\"s.");
 	    System.out.println();
 	    System.out.println();
 		
