@@ -186,7 +186,7 @@ Cannibalised from cowsay-futurama:
     leela
 
 
-Cannibalised from browser ponies:
+Cannibalised from browser ponies, and then commit to ponysay:
   pony/
     allie
     archer
@@ -200,7 +200,7 @@ Cannibalised from browser ponies:
     sparkler
 
 
-Cannibalised from qt-ponies:
+Cannibalised from qt-ponies, and then commit to ponysay:
   pony/
     boxxy
     carecake
@@ -213,3 +213,9 @@ Cannibalised from qt-ponies:
     mjolna
     orange
     violet
+
+
+Cannibalised art, also commit to ponysay:
+  pony/
+    lunafly
+
