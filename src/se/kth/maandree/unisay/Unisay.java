@@ -290,7 +290,7 @@ public class Unisay
 	    return;
 	}
 	
-	final int width = notrunc ? Util.getWidth() : -1;
+	final int width = notrunc ? -1 : Util.getWidth();
 	if (width > 15) //sanity
 	{
 	    final OutputStream stdout = new BufferedOutputStream(System.out);
@@ -447,8 +447,11 @@ public class Unisay
 	    else if (Util.equalsAny(arg, "--all", "-A"))                                                                   usePonies = useCows = true;
 	    else if (arg.startsWith("-"))
 	    {
-		System.err.println("Unrecognised option, assuming it is a pony file: " + arg);
-		pony.add(arg);
+		if (false == Util.equalsAny(arg, "--no-truncate", "--notruncate", "--notrunc", "-T"))
+		{
+		    System.err.println("Unrecognised option, assuming it is a pony file: " + arg);
+		    pony.add(arg);
+		}
 	    }
 	    else
 		pony.add(arg);
