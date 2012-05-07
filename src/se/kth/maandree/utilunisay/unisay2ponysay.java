@@ -86,9 +86,22 @@ public class unisay2ponysay
 	out.println("$the_cow =<<EOC;");
 	String buf = null;
 	boolean skipln = false;
+	boolean esc = false;
 	
-	for (int d; (d = in.read()) != -1;)
+	int d;
+        while ((d = in.read()) != -1)
 	{
+	    if (esc)
+	    {
+		esc = false;
+		if (d == 'c')
+		{
+		    skipln = true;
+		    continue;
+		}
+		out.print("\\e");
+	    }
+	    
 	    if ((d & 0xC0) == 0x80) continue;
 	    if ((d & 0x80) == 0x80)
 	    {
@@ -134,7 +147,7 @@ public class unisay2ponysay
 		    buf += (char)d;
 	    else if ((d == '\n') && skipln)  skipln = false;
 	    else if (d == '$')               buf = new String();
-	    else if (d == '\033')            out.print("\\e");
+	    else if (d == '\033')            esc = true;
 	    else if (d < 128)                out.write(d);
 	    else
 	    {
@@ -145,6 +158,8 @@ public class unisay2ponysay
 	    }
 	}
 	
+	if (d != '\n')
+	    out.println();
 	out.println("EOC");
     }
 }

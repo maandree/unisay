@@ -1,5 +1,5 @@
 /**
- * img2unisay — unisay to image convertion tool
+ * unisay2img — unisay to image convertion tool
  *
  * Copyright © 2012  Mattias Andrée (maandree@kth.se)
  *
@@ -26,7 +26,7 @@ import java.io.*;
 
 
 /**
- * The main class of the img2unisay program
+ * The main class of the unisay2img program
  *
  * @author  Mattias Andrée, <a href="mailto:maandree@kth.se">maandree@kth.se</a>
  */
