@@ -411,6 +411,8 @@ public class Unisay
      */
     private static void start(final String... args) throws IOException
     {
+	final boolean linuxvt = Util.getProperty("TERM").equals("linux");
+	
 	final String priv = "~/.local/share/unisay/".replace("~", Util.getProperty("HOME"));
 	final String publ = "/usr/share/unisay/";
 	
@@ -473,8 +475,8 @@ public class Unisay
 	else
 	    oneSay = null; //we will catch it later
 	
-	final String privateDir    = priv + "pony/";
-	final String  publicDir    = publ + "pony/";
+	final String privateDir    = priv + (linuxvt ? "tty" : "") + "pony/";
+	final String  publicDir    = publ + (linuxvt ? "tty" : "") + "pony/";
 	final String privateCowDir = priv + "cow/";
 	final String  publicCowDir = publ + "cow/";
 	
