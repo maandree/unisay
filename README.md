@@ -39,8 +39,20 @@ To run, for example, `unisay -q -p unicode -P` when the terminal starts,
 but `fortune | unisay -C` when using Linux VT; add the follow to your `~/.bashrc`:
 
     if [ "$TERM" = "linux" ]; then
-        fortune | unisay -C
+        unisay -p linux-vt -P
     else
-        unisay -q -p unicode -P
+        unisay -p unicode -P
+    fi
+
+### Ponies in TTY (Linux VT)
+
+If you have a custom colour palette edit your `~/.bashrc` and add
+
+    if [ "$TERM" = "linux" ]; then
+        function unisay
+        {
+            exec unisay $@
+            #RESET PALETTE HERE
+        }
     fi
 
