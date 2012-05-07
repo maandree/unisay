@@ -138,24 +138,24 @@ public class unisay2img
 		if (d == '\\')
 		    if (link)
 		    {
-			upper.get(upper.size() - 1).add(back == null ? osip : back);
-			lower.get(lower.size() - 1).add(back == null ? osip : back);
+			upper.get(upper.size() - 1).add(LINK_B);
+			lower.get(lower.size() - 1).add(LINK_B);
 		    }
 		    else
 		    {
-			upper.get(upper.size() - 1).add(LINK_B);
-			lower.get(lower.size() - 1).add(LINK_B);
+			upper.get(upper.size() - 1).add(back == null ? osip : back);
+			lower.get(lower.size() - 1).add(back == null ? osip : back);
 		    }
 		else if (d == '/')
 		    if (link)
 		    {
-			upper.get(upper.size() - 1).add(back == null ? osip : back);
-			lower.get(lower.size() - 1).add(back == null ? osip : back);
+			upper.get(upper.size() - 1).add(LINK_F);
+			lower.get(lower.size() - 1).add(LINK_F);
 		    }
 		    else
 		    {
-			upper.get(upper.size() - 1).add(LINK_F);
-			lower.get(lower.size() - 1).add(LINK_F);
+			upper.get(upper.size() - 1).add(back == null ? osip : back);
+			lower.get(lower.size() - 1).add(back == null ? osip : back);
 		    }
 		else
 		{

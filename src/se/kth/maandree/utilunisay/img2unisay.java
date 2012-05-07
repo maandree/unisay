@@ -67,6 +67,7 @@ public class img2unisay
 	    System.out.println("Target (STDOUT): File name for new unisay pony");
 	    System.out.println();
 	    System.out.println("-2  Input image have double dimensioned pixels.");
+	    System.out.println("-p  Use OSI P colouring for Linux VT");
 	    System.out.println();
 	    System.out.println("Known supported input formats:");
 	    System.out.println("  ⋅  PNG  (non-animated)");
@@ -92,14 +93,15 @@ public class img2unisay
 	    return;
 	}
 	
+	boolean useP = false;
 	int ai = 0;
 	int ps = 1;
 	
-	if (args[ai].equals("-2"))
-	{
-	    ai++;
-	    ps = 2;
-	}
+	for (;; ai++)
+	    if      (args[ai].equals("-2"))  ps = 2;
+	    else if (args[ai].equals("-p"))  useP = true;
+	    else
+		break;
 	
 	if (args[ai].equals("--"))
 	    ai++;
@@ -140,7 +142,7 @@ public class img2unisay
 		
 		if (a != 0)
 		{
-		    pony[y][x] = (new Colour((byte)r, (byte)g, (byte)b)).index;
+		    pony[y][x] = useP ? ((r << 16) | (g << 8) | b) : (new Colour((byte)r, (byte)g, (byte)b)).index;
 		    empty = false;
 		    if (maxx < x)  maxx = x;
 		    if (minx > x)  minx = x;
@@ -188,6 +190,8 @@ public class img2unisay
 	    }
 	}
 	
+	if (useP)
+	    System.out.println("\033c");
 	System.out.println("$baloon" + (bw + 3) +  "$\033[0m");
 	System.out.println(offl + "$\\$");
 	System.out.println(offl + " $\\$");
@@ -201,7 +205,7 @@ public class img2unisay
 		final int lower = pony[y + 1][x];
 		
 		if ((upper < 0) && (lower < 0))
-	        {
+		{
 		    if (fore >= 0)  System.out.print("\033[39m");
 		    if (back >= 0)  System.out.print("\033[49m");
 		    fore = back = -1;
@@ -212,7 +216,10 @@ public class img2unisay
 		    if (back >= 0)  System.out.print("\033[49m");
 		    back = -1;
 		    if (fore != lower)
-			System.out.print("\033[38;5;" + (fore = lower) + "m");
+			if (useP)
+			    System.out.print(getOSIPCode(fore = lower, false));
+			else
+			    System.out.print("\033[38;5;" + (fore = lower) + "m");
 		    System.out.print('▄');
 		}
 		else if (lower < 0)
@@ -220,25 +227,72 @@ public class img2unisay
 		    if (back >= 0)  System.out.print("\033[49m");
 		    back = -1;
 		    if (fore != upper)
-			System.out.print("\033[38;5;" + (fore = upper) + "m");
+			if (useP)
+			    System.out.print(getOSIPCode(fore = upper, false));
+			else
+			    System.out.print("\033[38;5;" + (fore = upper) + "m");
 		    System.out.print('▀');
 		}
 		else if ((back == lower) || (fore == upper))
 		{
-		    if (fore != upper)  System.out.print("\033[38;5;" + (fore = upper) + "m");
-		    if (back != lower)  System.out.print("\033[48;5;" + (back = lower) + "m");
+		    if (fore != upper)
+			if (useP)
+			    System.out.print(getOSIPCode(fore = upper, false));
+			else
+			    System.out.print("\033[38;5;" + (fore = upper) + "m");
+		    
+		    if (back != lower)
+			if (useP)
+			    System.out.print(getOSIPCode(back = lower, true));
+			else
+			    System.out.print("\033[48;5;" + (back = lower) + "m");
+		    
 		    System.out.print('▀');
 		}
 		else
 		{
-		    if (back != upper)  System.out.print("\033[48;5;" + (back = upper) + "m");
-		    if (fore != lower)  System.out.print("\033[38;5;" + (fore = lower) + "m");
+		    if (back != upper)
+			if (useP)
+			    System.out.print(getOSIPCode(back = upper, true));
+			else
+			    System.out.print("\033[48;5;" + (back = upper) + "m");
+			
+		    if (fore != lower)
+			if (useP)
+			    System.out.print(getOSIPCode(fore = lower, false));
+			else
+			    System.out.print("\033[38;5;" + (fore = lower) + "m");
+			
 		    System.out.print('▄');
 		}
 	    }
 	    fore = back = -1;
+	    if (useP)
+	    {
+		System.out.print("\033]P7aaaaaa");
+		System.out.print("\033]Pfffffff");
+	    }
 	    System.out.println("\033[0m");
 	}
+    }
+    
+
+    private static final String HEX = "0123456789abcdef";    
+    private static String getOSIPCode(final int colour, final boolean background)
+    {
+	int r = colour >> 16;
+	int g = colour >> 8;
+	int b = colour;
+			    
+	String code = new String();
+	code += HEX.charAt((r >> 4) & 15);
+	code += HEX.charAt( r       & 15);
+	code += HEX.charAt((g >> 4) & 15);
+	code += HEX.charAt( g       & 15);
+	code += HEX.charAt((b >> 4) & 15);
+	code += HEX.charAt( b       & 15);
+	
+	return "\033]P" + (background ? '7' : 'f') + code + "\033[" + (background ? "4" : "1;3") + "7m";
     }
     
 }

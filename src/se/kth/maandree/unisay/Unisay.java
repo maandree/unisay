@@ -361,7 +361,10 @@ public class Unisay
 			    {
 				this.esc--;
 				if (this.esc == ~7)
+				{
+				    flush();
 				    this.esc = 10;
+				}
 			    }
 			    else
 				this.esc = 10;
