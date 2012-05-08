@@ -1,7 +1,7 @@
 Baloonless print, just the pony
+Wrap message to fit screen (disableable)
 Pony editor (terminal)
 Bug hunt!
-unisay2png
 Event remainders (countdown)
 Autocolouring
 Baloon to the right
@@ -11,10 +11,8 @@ Improve colours on
     fillytwilight
     gummy
 Pony alterntives for different termial caps
-    -256 colours
     -16 colours
     -8 colours
-    -24-bit OSI P colours (^[]Pnrrggbb)
     -no block elements
 Update ponyquotes
 Bash completion
