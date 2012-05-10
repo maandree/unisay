@@ -161,14 +161,14 @@ public class Unisay
 	    if (cows || allargs)
 	    {
 		System.out.print("\n\n");
-		System.out.println("  --Cows");
+		System.out.println("  --cows");
 		System.out.println("  -C");
 		System.out.println("                Use only (unless another class is specified) cows.");
 	    }
 	    if (ponies || allargs)
 	    {
 		System.out.print("\n\n");
-		System.out.println("  --Ponies");
+		System.out.println("  --ponies");
 		System.out.println("  -P");
 		System.out.println("                Use only (unless another class is specified) ponies.");
 	    }
