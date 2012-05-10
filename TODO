@@ -1,6 +1,5 @@
 Baloonless print, just the pony
 Wrap message to fit screen (disableable)
-Pony editor (terminal)
 Bug hunt!
 Event remainders (countdown)
 Autocolouring
@@ -10,10 +9,6 @@ Improve colours on
     spikelove
     fillytwilight
     gummy
-Pony alterntives for different termial caps
-    -16 colours
-    -8 colours
-    -no block elements
 Update ponyquotes
 Bash completion
 Info manual
