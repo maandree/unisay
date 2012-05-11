@@ -42,8 +42,6 @@ _unisay()
 	
 	if [[ $prev = "--cows" || $prev = "-C" ]]; then
 	    COMPREPLY=()
-	    sysponies=/usr/share/unisay/cow/
-            usrponies=~/.local/share/unisay/cow/
 	fi
 	
 	if [[ $prev = "--cows" || $prev = "-C" || $prev = "--all" || $prev = "-A" ]]; then
@@ -64,6 +62,6 @@ _unisay()
 complete -o default -F _unisay unisay
 
 
-echo "  A bug in bash-completion breaks up quotes, if use use it you may want " >&2
+echo "  A bug in bash-completion breaks up quotes, if use use it you may want" >&2
 echo "  to uninstall this completion script, otherwise, comment this message." >&2
 
