@@ -1,0 +1,69 @@
+# bash completion for unisay            -*- shell-script -*-
+
+_unisay()
+{
+    local cur prev words cword
+    _init_completion -n = || return
+    
+    if [[ $prev = "--format" ]]; then
+	COMPREPLY=();
+	
+	sysformats=/usr/share/unisay/format/
+	usrformats=/.local/share/unisay/format/
+	
+	if [[ -d $sysformats ]]; then
+	    COMPREPLY+=( $( compgen -W "$(ls $sysformats)" -- "$cur" ) )
+	fi
+	if [[ -d $usrformats ]]; then
+	    COMPREPLY+=( $( compgen -W "$(ls $usrformats)" -- "$cur" ) )
+	fi
+    elif [[ $prev = "--say" || $prev = "-s" ]]; then
+	COMPREPLY=( '"`fortune`"' )  #bug in completion itself breaks up quotes, even if not added through completion
+    elif [[ $cur = -* ]]; then
+	COMPREPLY=( $( compgen -W '--help --format --random --say --pony-quotes --ponyquotes --quotes --no-truncate' -- "$cur" ) \
+	            $( compgen -W '--notruncate --notrunc --cows --ponies --all -h -p -r -s -q -T -P -C -A --' -- "$cur" ) \
+		  )
+    else
+	COMPREPLY=()
+	
+	sysponies=/usr/share/unisay/pony/
+	usrponies=~/.local/share/unisay/pony/
+	if [[ $TERM = "linux" ]]; then
+	    sysponies=/usr/share/unisay/ttypony/
+	    usrponies=~/.local/share/unisay/ttypony/
+	fi
+	
+	if [[ -d $sysponies ]]; then
+	    COMPREPLY+=( $( compgen -W "$(ls $sysponies)" -- "$cur" ) )
+	fi
+	if [[ -d $usrponies ]]; then
+	    COMPREPLY+=( $( compgen -W "$(ls $usrponies)" -- "$cur" ) )
+	fi
+	
+	if [[ $prev = "--cows" || $prev = "-C" ]]; then
+	    COMPREPLY=()
+	    sysponies=/usr/share/unisay/cow/
+            usrponies=~/.local/share/unisay/cow/
+	fi
+	
+	if [[ $prev = "--cows" || $prev = "-C" || $prev = "--all" || $prev = "-A" ]]; then
+	    sysponies=/usr/share/unisay/cow/
+            usrponies=~/.local/share/unisay/cow/
+	    
+	    if [[ -d $sysponies ]]; then
+		COMPREPLY+=( $( compgen -W "$(ls $sysponies)" -- "$cur" ) )
+	    fi
+	    if [[ -d $usrponies ]]; then
+		COMPREPLY+=( $( compgen -W "$(ls $usrponies)" -- "$cur" ) )
+	    fi
+	fi
+    fi
+}
+
+
+complete -o default -F _unisay unisay
+
+
+echo "  A bug in bash-completion breaks up quotes, if use use it you may want " >&2
+echo "  to uninstall this completion script, otherwise, comment this message." >&2
+
