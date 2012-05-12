@@ -9,7 +9,7 @@ _unisay()
 	COMPREPLY=();
 	
 	sysformats=/usr/share/unisay/format/
-	usrformats=/.local/share/unisay/format/
+	usrformats=~/.local/share/unisay/format/
 	
 	if [[ -d $sysformats ]]; then
 	    COMPREPLY+=( $( compgen -W "$(ls $sysformats)" -- "$cur" ) )
