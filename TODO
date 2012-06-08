@@ -1,13 +1,19 @@
-Baloonless print, just the pony
-Wrap message to fit screen (disableable)
+Baloonless print, just the pony (-I, +I for just the quote)
+
+Force 256 colours (-X)
+
+Force TTY colours (-V)
+
+Wrap message to fit screen (-w WIDTH | -w no)
+
 Bug hunt!
-Event remainders (countdown)
-Autocolouring
-Baloon to the right
-Improve colours on
-    pinkamina
-    spikelove
-    fillytwilight
-    gummy
+
+Event remainders (disabled with -N)
+
+Autocolouring (disabled with -N)
+
+Improve colours on ponies
+
 Update ponyquotes
+
 Info manual
