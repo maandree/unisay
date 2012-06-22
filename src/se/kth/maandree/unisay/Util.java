@@ -95,7 +95,38 @@ public class Util
     {
 	try
 	{
-	    final Process process = (new ProcessBuilder("/bin/sh", "-c", "size size 2> " + (new File("/dev/stderr")).getCanonicalPath() + " | cut -d ' ' -f 1")).start();
+	    final Process process = (new ProcessBuilder("/bin/sh", "-c", "typo size 2> " + (new File("/dev/stderr")).getCanonicalPath() + " | cut -d ' ' -f 1")).start();
+	    String rcs = new String();
+	    final InputStream stream = process.getInputStream();
+	    int c;
+	    while (((c = stream.read()) != '\n') && (c != -1))
+		rcs += (char)c;
+	    try
+	    {
+		stream.close();
+	    }
+	    catch (final Throwable err)
+	    {
+		//Ignore
+	    }
+	    return Integer.parseInt(rcs);
+	}
+	catch (final Throwable err)
+	{
+	    return 0;
+	}
+    }
+    
+    /**
+     * Gets the height of the terminal
+     *
+     * @return  The height of the terminal
+     */
+    public static int getHeight()
+    {
+	try
+	{
+	    final Process process = (new ProcessBuilder("/bin/sh", "-c", "stty size 2> " + (new File("/dev/stderr")).getCanonicalPath() + " | cut -d ' ' -f 2")).start();
 	    String rcs = new String();
 	    final InputStream stream = process.getInputStream();
 	    int c;
