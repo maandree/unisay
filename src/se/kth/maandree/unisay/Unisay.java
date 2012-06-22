@@ -1024,6 +1024,32 @@ public class Unisay
 		    buf = nbuf;
 		}
 	    }
+	    else if (d == '\033')
+	    {
+		System.out.write(d);
+		if ((d = is.read()) == -1)
+		    break;
+		System.out.write(d);
+		
+		if (d == 'c')
+		    indent = 0;
+		else if (d == ']')
+		{
+		    if ((d = is.read()) == -1)
+			break;
+		    System.out.write(d);
+		    if (d == 'P')
+			for (int di = 0; (di < 7) && ((d = is.read()) != -1); di++)
+			    System.out.write(d);
+		}
+		else if (d == '[')
+		    while ((d = is.read()) != -1)
+		    {
+			System.out.write(d);
+			if ((d == '~') || (('a' <= d) && (d <= 'z')) || (('A' <= d) && (d <= 'Z')))
+			    break;
+		    }
+	    }
 	    else
 	    {
 		System.out.write(d);
