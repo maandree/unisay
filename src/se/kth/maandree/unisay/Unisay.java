@@ -494,6 +494,26 @@ public class Unisay
 	}
 	final boolean linuxvt = colourX ? false : colourP ? true : Util.getProperty("TERM").equals("linux");
 	
+	final Vector<String> modes = new Vector<String>();
+	final HashMap<String, String> modeMap = new HashMap<String, String>();
+	
+	modeMap.put("borg",     "$eye==$$tongue=  $");      modes.add("$eye==$$tongue=  $");  // FIXME should be in a separate file
+	modeMap.put("dead",     "$eye=X$$tongue=U $");      modes.add("$eye=X$$tongue=U $");
+	modeMap.put("greedy",   "$eye=\033$$$tongue=  $");  modes.add("$eye=\033$$$tongue=  $");
+	modeMap.put("happy",    "$eye=^$$tongue=  $");      modes.add("$eye=^$$tongue=  $");
+	modeMap.put("normal",   "$eye=o$$tongue=  $");      modes.add("$eye=o$$tongue=  $");
+	modeMap.put("paranoid", "$eye=@$$tongue=  $");      modes.add("$eye=@$$tongue=  $");
+	modeMap.put("stoned",   "$eye=*$$tongue=U $");      modes.add("$eye=*$$tongue=U $");
+	modeMap.put("tired",    "$eye=-$$tongue=  $");      modes.add("$eye=-$$tongue=  $");
+	modeMap.put("tongue",   "$eye=o$$tongue=U $");      modes.add("$eye=o$$tongue=U $");
+	modeMap.put("wired",    "$eye=O$$tongue=  $");      modes.add("$eye=O$$tongue=  $");
+	modeMap.put("youthful", "$eye=.$$tongue=  $");      modes.add("$eye=.$$tongue=  $");
+	if (linuxvt == false)
+	{   modeMap.put("unamused", "$eye=σ$$tongue= $");  modes.add("$eye=σ$$tongue= $");
+	}
+	
+	byte[] oneMode = modes.get((int)(Math.random() * modes.size()) % modes.size()).getBytes("UTF-8");
+	
 	if ((useCows || usePonies) == false)
 	    useCows = usePonies = true;
 	
@@ -981,7 +1001,7 @@ public class Unisay
 		maxlen = len[0];
 	
 	final Baloon baloon = new Baloon(lens, maxlen, lines, mnw, mn, mne, me[0], mse, ms, msw, mw[0]);
-	say(onePony, baloon, ml[0], mL[0]);
+	say(onePony, baloon, ml[0], mL[0], oneMode);
     }
     
     
@@ -995,14 +1015,32 @@ public class Unisay
      * 
      * @throws  IOException  On I/O exception
      */
-    private static void say(final String ponyFile, final Baloon baloon, final int[] l, final int[] L) throws IOException
+    private static void say(final String ponyFile, final Baloon baloon, final int[] l, final int[] L, final byte[] mode) throws IOException
     {
 	final HashMap<String, byte[]> variables = new HashMap<String, byte[]>();
-	final InputStream is = new BufferedInputStream(new FileInputStream(new File(ponyFile)));
+	final InputStream _is = new BufferedInputStream(new FileInputStream(new File(ponyFile)));
 	variables.put("\\", Util.toBytes(l));
 	variables.put("/", Util.toBytes(L));
 	variables.put("", Util.toBytes((int)'$'));
 	int indent = 0;
+	
+	final InputStream is = new InputStream()
+	        {
+		    /**
+		     * Pointer for {@code mode}
+		     */
+		    private int ptr = 0;
+		    
+		    /**
+		     * {@inheritDoc}
+		     */
+		    public int read() throws IOException
+		    {
+			if (this.ptr < mode.length)
+			    return mode[this.ptr++];
+			return _is.read();
+		    }
+	        };
 	
 	boolean dollar = false;
 	int eq = 0, ptr = 0;
@@ -1017,7 +1055,7 @@ public class Unisay
 		    if (eq != 0)
 		    {
 			final byte[] val = new byte[ptr - eq - 1];
-			System.arraycopy(val, 0, buf, eq + 1, val.length);
+			System.arraycopy(buf, eq + 1, val, 0, val.length);
 			variables.put(var, val);
 		    }
 		    else if (var.startsWith("baloon"))
@@ -1093,7 +1131,7 @@ public class Unisay
 		    indent = 0;
 	    }
 	
-	is.close();
-    }    
+	_is.close();
+    }
     
 }
