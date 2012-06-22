@@ -1,5 +1,5 @@
 install:
-	javac -cp . -s src - . $$(find ./src | grep \\.java)
+	javac -cp . -s src -d . $$(find ./src | grep \\.java)
 	jar -cfm unisay.jar META-INF/MANIFEST.MF $$(find ./se | grep \\.class)
 	rm -r se
 	install -d "${DESTDIR}/usr/bin"
