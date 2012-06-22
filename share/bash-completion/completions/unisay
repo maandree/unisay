@@ -61,7 +61,4 @@ _unisay()
 
 complete -o default -F _unisay unisay
 
-
-echo "  A bug in bash-completion breaks up quotes, if you use it you may want" >&2
-echo "  to uninstall this completion script, otherwise, comment this message." >&2
-
+ 
