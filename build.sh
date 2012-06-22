@@ -83,13 +83,13 @@ function colourise()
     if [[ $paramEcho = 1 ]]; then
         cat
     elif [[ $paramEcj = 1 ]]; then
-	if [[ -f "colourpipe.ecj.jar" ]]; then
-            javaSeven -jar colourpipe.ecj.jar
+	if [[ -f "dev/colourpipe.ecj.jar" ]]; then
+            javaSeven -jar dev/colourpipe.ecj.jar
 	else
 	    cat
 	fi
-    elif [[ -f "colourpipe.javac.jar" ]]; then
-        javaSeven -jar colourpipe.javac.jar
+    elif [[ -f "dev/colourpipe.javac.jar" ]]; then
+        javaSeven -jar dev/colourpipe.javac.jar
     else
 	cat
     fi
