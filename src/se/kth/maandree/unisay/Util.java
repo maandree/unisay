@@ -95,7 +95,7 @@ public class Util
     {
 	try
 	{
-	    final Process process = (new ProcessBuilder("/bin/sh", "-c", "tput cols 2> " + (new File("/dev/stderr")).getCanonicalPath())).start();
+	    final Process process = (new ProcessBuilder("/bin/sh", "-c", "size size 2> " + (new File("/dev/stderr")).getCanonicalPath() + " | cut -d ' ' -f 1")).start();
 	    String rcs = new String();
 	    final InputStream stream = process.getInputStream();
 	    int c;
