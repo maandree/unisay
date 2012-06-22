@@ -1,4 +1,4 @@
-B#!/bin/sh
+#!/bin/sh
 
 ## program execution information
 package="se.kth.maandree.unisay"
