@@ -971,15 +971,14 @@ public class Unisay
 	variables.put("", Util.toBytes((int)'$'));
 	int indent = 0;
 	
-	boolean esc = false;
-	int eq = 0;
+	boolean dollar = false;
+	int eq = 0, ptr = 0;
 	byte[] buf = new byte[16];
-	int ptr = 0;
 	
 	for (int d; (d = is.read()) != -1;)
 	    if (d == '$')
 	    {
-		if ((esc ^= true) == false)
+		if ((dollar ^= true) == false)
 		{
 		    String var = new String(buf, 0, eq == 0 ? ptr : eq, "UTF-8");
 		    if (eq != 0)
@@ -1013,14 +1012,7 @@ public class Unisay
 		    ptr = 0;
 		}
 	    }
-	    else if (esc == false)
-	    {
-		System.out.write(d);
-		indent++;
-		if (d == '\n')
-		    indent = 0;
-	    }
-	    else
+	    else if (dollar)
 	    {
 		if ((buf[ptr++] = (byte)d) == (byte)'=')
 		    if (eq == 0)
@@ -1031,6 +1023,13 @@ public class Unisay
 		    System.arraycopy(nbuf, 0, buf, 0, ptr);
 		    buf = nbuf;
 		}
+	    }
+	    else
+	    {
+		System.out.write(d);
+		indent++;
+		if (d == '\n')
+		    indent = 0;
 	    }
 	
 	is.close();
