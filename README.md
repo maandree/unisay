@@ -11,17 +11,9 @@ start with --help for more information, with or without options.
 Install
 -------
 
-To install manually copy the directories `bin` and `share` to either `/usr` or `~/.local`. Also, to either `/usr/bin` or `~/.local/bin`, add `unisay.jar`, which is built by running:
-    
-    cd src
-    javac -cp . se/kth/maandree/unisay/*.java
-    jar -cfm ../bin/unisay.jar META-INF/MANIFEST.MF se/kth/maandree/unisay/*.class
-    rm se/kth/maandree/unisay/*.class
-    cd ..
+To install unisay, just run the command
 
-In the same directory as `unisay.jar` add a file `unisay` containing to code:
-
-    java -jar $0.jar $@
+    sudo make install
 
 ### Displaying fortune cookies
 
