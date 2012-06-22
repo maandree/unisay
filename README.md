@@ -34,12 +34,12 @@ of `fortune`. pinkie-pit is available in AUR under the name `pinkie-pie-git`.
 ### Run on terminal startup
 
 To run, for example, `unisay -q -p unicode -P` when the terminal starts,
-but `fortune | unisay -C` when using Linux VT; add the follow to your `~/.bashrc`:
+but `unisay -q -p linux-vt -P` when using Linux VT; add the follow to your `~/.bashrc`:
 
     if [ "$TERM" = "linux" ]; then
-        unisay -p linux-vt -P
+        unisay -q -p linux-vt -P
     else
-        unisay -p unicode -P
+        unisay -q -p unicode -P
     fi
 
 ### Ponies in TTY (Linux VT)
