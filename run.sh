@@ -1,4 +1,4 @@
-#!/bin/sh
+B#!/bin/sh
 
 ## program execution information
 package="se.kth.maandree.unisay"
@@ -31,6 +31,6 @@ if [[ $1 = "--completion--" ]]; then
 
 ## run
 else
-    javaSeven -ea -cp bin$jars "$package"."$main" "$@"
+    fortune | javaSeven -ea -cp bin$jars "$package"."$main" "$@"
 
 fi
