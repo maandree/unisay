@@ -81,9 +81,8 @@ public class Unisay
 	    System.out.println();
 	    System.out.println();
 	    System.out.println("USAGE:");
-	    System.out.print("\n\n");
-	    System.out.println("  unisay [-pifoTCPA <FILE> <CP> <CP> <CP> <TEXT>] [-s <TEXT> | -q]");
-	    System.out.println("         (-r | [--] <FILES...>)");
+	    System.out.println();
+	    System.out.println("  unisay [-pifoTCPA <FILE> <CP> <CP> <CP>] [-s <TEXT> | -q] (-r | [--] <FILES...>)");
 	    System.out.println();
 	    System.out.println("  -p <FILE>, -i <CP>, -f <CP>, -o <CP>, -T, -C, -P and -A");
 	    System.out.println("  are mutally independent and may be included as you see fit.");
