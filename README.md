@@ -29,7 +29,7 @@ Fortune cookies are displayed by running:
     fortune | unisay
 
 If you want ponified fortune cookies use `pinkiepie` (`pinkie`) instead
-of `fortune`. pinkie-pit is available in AUR under the name `pinkie-pie-git`.
+of `fortune`. pinkie-pie is available in AUR under the name `pinkie-pie-git`.
 
 ### Run on terminal startup
 
