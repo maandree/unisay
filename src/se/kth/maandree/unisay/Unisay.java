@@ -229,7 +229,7 @@ public class Unisay
 		System.out.println("      w:        The left edge of the baloon");
 		System.out.println("      \\:        Link line between the baloon and the pony. (\\ direction)");
 		System.out.println("      /:        Link line between the baloon and the pony. (/ direction)");
-		//I have decided not to adopt cowsays depenceny of the number of lines in the baloon.
+		//I have decided not to adopt cowsay's depenceny of the number of lines in the baloon.
 		System.out.println("  Note that the are no spaces; the text followed by the colon on");
 		System.out.println("  such a line sets the attribute's value. Hashes (#) by be used");
 		System.out.println("  as the first character on a line to make it a comment. e:, w:,");
