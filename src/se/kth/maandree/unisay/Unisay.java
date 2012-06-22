@@ -509,7 +509,7 @@ public class Unisay
 	modeMap.put("wired",    "$eye=O$$tongue=  $");      modes.add("$eye=O$$tongue=  $");
 	modeMap.put("youthful", "$eye=.$$tongue=  $");      modes.add("$eye=.$$tongue=  $");
 	if (linuxvt == false)
-	{   modeMap.put("unamused", "$eye=σ$$tongue= $");  modes.add("$eye=σ$$tongue= $");
+	{   modeMap.put("unamused", "$eye=σ$$tongue=  $");  modes.add("$eye=σ$$tongue=  $");
 	}
 	
 	byte[] oneMode = modes.get((int)(Math.random() * modes.size()) % modes.size()).getBytes("UTF-8");

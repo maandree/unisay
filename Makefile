@@ -13,6 +13,7 @@ install:
 	install -m 755 bin/unisay unisay.jar "${DESTDIR}/usr/bin"
 	install -m 644 share/bash-completion/completions/* "${DESTDIR}/usr/share/bash-completion/completions"
 	install -m 644 share/licenses/unisay/* "${DESTDIR}/usr/share/licenses/unisay"
+	install -m 644 share/unisay/modes "${DESTDIR}/usr/share/unisay/modes"
 	install -m 644 share/unisay/cow/* "${DESTDIR}/usr/share/unisay/cow"
 	install -m 644 share/unisay/format/* "${DESTDIR}/usr/share/unisay/format"
 	install -m 644 share/unisay/pony/* "${DESTDIR}/usr/share/unisay/pony"
