@@ -1,9 +1,5 @@
 Baloonless print, just the pony (-I, +I for just the quote)
 
-Force 256 colours (-X)
-
-Force TTY colours (-V)
-
 Wrap message to fit screen (-w WIDTH | -w no)
 
 Bug hunt!

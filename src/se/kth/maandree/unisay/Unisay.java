@@ -51,22 +51,24 @@ public class Unisay
 	boolean help = false, anyarg = false;
 	boolean random = false, format = false, dash = false, notrunc = false;
 	boolean say = false, icp = false, fcp = false, ocp = false, quote = false;
-	boolean cows = false, ponies = false, all = false;
+	boolean cows = false, ponies = false, all = false, colourX = false, colourP = false;
 	
 	for (final String arg : args)
-	    if      (Util.equalsAny(arg, "--help", "-h"))                                                help    = true;
-	    else if (Util.equalsAny(arg, "--"))                                                 anyarg = dash    = true;
-	    else if (Util.equalsAny(arg, "--random", "-r"))                                     anyarg = random  = true;
-	    else if (Util.equalsAny(arg, "--format", "-p"))                                     anyarg = format  = true;
-	    else if (Util.equalsAny(arg, "--say", "-s"))                                        anyarg = say     = true;
-	    else if (Util.equalsAny(arg, "--pony-quotes", "--ponyquotes", "--quotes", "-q"))    anyarg = quote   = true;
-	    else if (Util.equalsAny(arg, "--no-truncate", "--notruncate", "--notrunc", "-T"))   anyarg = notrunc = true;
-	    else if (Util.equalsAny(arg, "--cows", "-C"))                                       anyarg = cows    = true;
-	    else if (Util.equalsAny(arg, "--ponies", "-P"))                                     anyarg = ponies  = true;
-	    else if (Util.equalsAny(arg, "--all", "-A"))                                        anyarg = all     = true;
-	    else if (Util.equalsAny(arg, "--in-encoding", "--icp", "--ie", "-i"))               anyarg = icp     = true;
-	    else if (Util.equalsAny(arg, "--file-encoding", "--fcp", "--fe", "-f"))             anyarg = fcp     = true;
-	    else if (Util.equalsAny(arg, "--out-encoding", "--ocp", "--oe", "-o"))              anyarg = ocp     = true;
+	    if      (Util.equalsAny(arg, "--help", "-h"))                                                 help    = true;
+	    else if (Util.equalsAny(arg, "--"))                                                  anyarg = dash    = true;
+	    else if (Util.equalsAny(arg, "--random", "-r"))                                      anyarg = random  = true;
+	    else if (Util.equalsAny(arg, "--format", "-p"))                                      anyarg = format  = true;
+	    else if (Util.equalsAny(arg, "--say", "-s"))                                         anyarg = say     = true;
+	    else if (Util.equalsAny(arg, "--pony-quotes", "--ponyquotes", "--quotes", "-q"))     anyarg = quote   = true;
+	    else if (Util.equalsAny(arg, "--no-truncate", "--notruncate", "--notrunc", "-T"))    anyarg = notrunc = true;
+	    else if (Util.equalsAny(arg, "--cows", "-C"))                                        anyarg = cows    = true;
+	    else if (Util.equalsAny(arg, "--ponies", "-P"))                                      anyarg = ponies  = true;
+	    else if (Util.equalsAny(arg, "--all", "-A"))                                         anyarg = all     = true;
+	    else if (Util.equalsAny(arg, "--in-encoding", "--icp", "--ie", "-i"))                anyarg = icp     = true;
+	    else if (Util.equalsAny(arg, "--file-encoding", "--fcp", "--fe", "-f"))              anyarg = fcp     = true;
+	    else if (Util.equalsAny(arg, "--out-encoding", "--ocp", "--oe", "-o"))               anyarg = ocp     = true;
+	    else if (Util.equalsAny(arg, "--256-colours", "--256colours", "--x-colours", "-X"))  anyarg = colourX = true;
+	    else if (Util.equalsAny(arg, "--tty-colours", "--ttycolours", "--vt-colours", "-V")) anyarg = colourP = true;
 	
 	final boolean allargs = !anyarg;
 	
@@ -82,7 +84,8 @@ public class Unisay
 	    System.out.println();
 	    System.out.println("USAGE:");
 	    System.out.println();
-	    System.out.println("  unisay [-pifoTCPA <FILE> <CP> <CP> <CP>] [-s <TEXT> | -q] (-r | [--] <FILES...>)");
+	    System.out.println("  unisay [-pifoTCPA <FILE> <CP> <CP> <CP>] [-X | -V] [{-s <TEXT>} | -q]");
+	    System.out.println("         (-r | [--] <FILES...>)");
 	    System.out.println();
 	    System.out.println("  -p <FILE>, -i <CP>, -f <CP>, -o <CP>, -T, -C, -P and -A");
 	    System.out.println("  are mutally independent and may be included as you see fit.");
@@ -178,6 +181,28 @@ public class Unisay
 		System.out.println("  -A");
 		System.out.println("                Use all images; both cows and ponies.");
 		System.out.println("                This option is default.");
+	    }
+	    if (colourX || allargs)
+	    {
+		System.out.print("\n\n");
+		System.out.println("  --256-colours");
+		System.out.println("  --256colours");
+		System.out.println("  --x-colours");
+		System.out.println("  -X");
+		System.out.println("                Forces used of 256-colour ponies dispite of actual");
+		System.out.println("                terminal capabilities. This if the terminal is faked");
+		System.out.println("                or not is the actual displayer.");
+	    }
+	    if (colourP || allargs)
+	    {
+		System.out.print("\n\n");
+		System.out.println("  --tty-colours");
+		System.out.println("  --ttycolours");
+		System.out.println("  --vt-colours");
+		System.out.println("  -V");
+		System.out.println("                Forces used of TTY ponies (OSI P colours) dispite of");
+		System.out.println("                actual terminal capabilities. This if the terminal is");
+		System.out.println("                faked or is not the actual displayer.");
 	    }
 	    if (icp || allargs)
 	    {
@@ -410,8 +435,6 @@ public class Unisay
      */
     private static void start(final String... args) throws IOException
     {
-	final boolean linuxvt = Util.getProperty("TERM").equals("linux");
-	
 	final String priv = "~/.local/share/unisay/".replace("~", Util.getProperty("HOME"));
 	final String publ = "/usr/share/unisay/";
 	
@@ -432,6 +455,11 @@ public class Unisay
 	boolean dash = false;
 	boolean useCows = false;
 	boolean usePonies = false;
+	boolean colourX = false;
+	boolean colourP = false;
+	
+	final String[] colourXargs = {"--256-colours", "--256colours", "--x-colours", "-X"};
+	final String[] colourPargs = {"--tty-colours", "--ttycolours", "--vt-colours", "-V"};
 	
 	for (int i = 0, m = args.length; i < m; i++)
         {
@@ -449,6 +477,10 @@ public class Unisay
 	    else if (Util.equalsAny(arg, "--cows", "-C"))                                                                  useCows = true;
 	    else if (Util.equalsAny(arg, "--ponies", "-P"))                                                                usePonies = true;
 	    else if (Util.equalsAny(arg, "--all", "-A"))                                                                   usePonies = useCows = true;
+	    else if (Util.equalsAny(arg, colourXargs))                                        if (colourX || colourP)      System.err.println("-X and -V may only be used once, and not togather.");
+		                                                                              else                         colourX = true;
+	    else if (Util.equalsAny(arg, colourPargs))                                        if (colourX || colourP)      System.err.println("-V and -X may only be used once, and not togather.");
+		                                                                              else                         colourP = true;
 	    else if (arg.startsWith("-"))
 	    {
 		if (false == Util.equalsAny(arg, "--no-truncate", "--notruncate", "--notrunc", "-T"))
@@ -460,6 +492,7 @@ public class Unisay
 	    else
 		pony.add(arg);
 	}
+	final boolean linuxvt = colourX ? false : colourP ? true : Util.getProperty("TERM").equals("linux");
 	
 	if ((useCows || usePonies) == false)
 	    useCows = usePonies = true;
