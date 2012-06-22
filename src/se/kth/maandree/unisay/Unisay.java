@@ -1014,6 +1014,8 @@ public class Unisay
 	    }
 	    else if (dollar)
 	    {
+		if (d == '\033')
+		    d = is.read();
 		if ((buf[ptr++] = (byte)d) == (byte)'=')
 		    if (eq == 0)
 			eq = ptr - 1;
