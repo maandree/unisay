@@ -4,7 +4,7 @@ install:
 	rm -r se
 	install -d "${DESTDIR}/usr/bin"
 	install -d "${DESTDIR}/usr/share/bash-completion/completions"
-	install -d "${DESTDIR}/usr/share/liceses/unisay"
+	install -d "${DESTDIR}/usr/share/licenses/unisay"
 	install -d "${DESTDIR}/usr/share/unisay/cow"
 	install -d "${DESTDIR}/usr/share/unisay/format"
 	install -d "${DESTDIR}/usr/share/unisay/pony"
