@@ -1,7 +1,11 @@
-install:
-	javac -cp . -s src -d . $$(find ./src | grep \\.java)
-	jar -cfm unisay.jar META-INF/MANIFEST.MF $$(find ./se | grep \\.class)
+all: unisay
+
+unisay:
+	javac -cp . -s src -d . $$(find ./src | grep '\.java$$')
+	jar -cfm unisay.jar META-INF/MANIFEST.MF $$(find ./se | 'grep \.class$$')
 	rm -r se
+
+install: all
 	install -d "${DESTDIR}/usr/bin"
 	install -d "${DESTDIR}/usr/share/bash-completion/completions"
 	install -d "${DESTDIR}/usr/share/licenses/unisay"
