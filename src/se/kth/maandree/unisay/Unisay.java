@@ -484,7 +484,7 @@ public class Unisay
 	    else if (arg.startsWith("-") || arg.startsWith("+"))
 	    {
 		if (Util.equalsAny(arg, "-w", "-I", "+I", "-N")) /* KEYWORD */
-		    i++
+		    i++;
 		else if (false == Util.equalsAny(arg, "--no-truncate", "--notruncate", "--notrunc", "-T"))
 		{
 		    System.err.println("Unrecognised option, assuming it is a pony file: " + arg);
