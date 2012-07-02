@@ -443,8 +443,36 @@ public class Unisay
 	    System.setOut(new PrintStream(out));
 	}
 	
-	start(args);
+	start(splitOpts(args));
 	System.out.flush();
+    }
+    
+    
+    /**
+     * Splits joined short options
+     * 
+     * @param   arg  Arguments
+     * @return       Arguments with splitted joined short options
+     */
+    private static String[] splitOpts(final String... args)
+    {
+	final ArrayList<String> rc = new ArrayList<String>();
+	
+	for (final String arg : args)
+	    if (arg.startsWith("--"))
+		rc.add(arg);
+	    else if (arg.startsWith("-"))
+		for (int i = 1, n = arg.length(); i < n; i++)
+		    rc.add("-" + arg.charAt(i));
+	    else if (arg.startsWith("+"))
+		for (int i = 1, n = arg.length(); i < n; i++)
+		    rc.add("+" + arg.charAt(i));
+	    else
+		rc.add(arg);
+	
+	final String[] _rc = new String[rc.size()];
+	System.arraycopy(rc, 0, _rc, 0, _rc.length);
+	return _rc;
     }
     
     
