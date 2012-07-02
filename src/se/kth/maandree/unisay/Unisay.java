@@ -52,6 +52,7 @@ public class Unisay
 	boolean random = false, format = false, dash = false, notrunc = false;
 	boolean say = false, icp = false, fcp = false, ocp = false, quote = false;
 	boolean cows = false, ponies = false, all = false, colourX = false, colourP = false;
+	boolean mode = false, eye = false, tongue = false;
 	
 	for (final String arg : args)
 	    if      (Util.equalsAny(arg, "--help", "-h"))                                                 help    = true;
@@ -69,6 +70,9 @@ public class Unisay
 	    else if (Util.equalsAny(arg, "--out-encoding", "--ocp", "--oe", "-o"))               anyarg = ocp     = true;
 	    else if (Util.equalsAny(arg, "--256-colours", "--256colours", "--x-colours", "-X"))  anyarg = colourX = true;
 	    else if (Util.equalsAny(arg, "--tty-colours", "--ttycolours", "--vt-colours", "-V")) anyarg = colourP = true;
+	    else if (Util.equalsAny(arg, "--mode", "-m"))                                        anyarg = mode    = true;
+	    else if (Util.equalsAny(arg, "--eye", "-e"))                                         anyarg = eye     = true;
+	    else if (Util.equalsAny(arg, "--tongue", "-t"))                                      anyarg = tongue  = true;
 	
 	final boolean allargs = !anyarg;
 	
@@ -84,11 +88,11 @@ public class Unisay
 	    System.out.println();
 	    System.out.println("USAGE:");
 	    System.out.println();
-	    System.out.println("  unisay [-pifoTCPA <FILE> <CP> <CP> <CP>] [-X | -V] [{-s <TEXT>} | -q]");
-	    System.out.println("         (-r | [--] <FILES...>)");
+	    System.out.println("  unisay [-pifoTCPAmet <FILE> <CP> <CP> <CP> <MODE|STRING> <CHAR> <STRING>]");
+	    System.out.println("         [-X | -V] [{-s <TEXT>} | -q] (-r | [--] <FILES...>)");
 	    System.out.println();
-	    System.out.println("  -p <FILE>, -i <CP>, -f <CP>, -o <CP>, -T, -C, -P and -A");
-	    System.out.println("  are mutally independent and may be included as you see fit.");
+	    System.out.println("  -p <FILE>, -i <CP>, -f <CP>, -o <CP>, -T, -C, -P, -A, -m <MODE|STRING>,");
+	    System.out.println("  -e <CHAR> -t <STRING> are mutally independent and may be included as you see fit.");
 	    System.out.println();
 	    System.out.println("  <FILES...> are whitespace separated files with ponys (or whatever),");
 	    System.out.println("  that are used printed in the output.");
@@ -204,6 +208,7 @@ public class Unisay
 		System.out.println("                actual terminal capabilities. This if the terminal is");
 		System.out.println("                faked or is not the actual displayer.");
 	    }
+	    // FIXME document -m --mode -e --eye -t --tongue
 	    if (icp || allargs)
 	    {
 		System.out.print("\n\n");
@@ -343,16 +348,11 @@ public class Unisay
 			public void write(final int b) throws IOException
 			{
 			    if (this.esc == 0)
-			    {
 				if (b == '\n')
 				{
 				    if (x >= width)
 				    {
-					write('\033');
-					write('[');
-					write('4');
-					write('9');
-					write('m');
+					write('\033'); write('['); write('4'); write('9'); write('m');
 				    }
 				    this.x = -1;
 				}
@@ -365,22 +365,17 @@ public class Unisay
 				}
 				else if (b == '\033')
 				    this.esc = 1;
-			    }
 			    else if (this.esc == 1)
-			    {
 				if      (b == '[')  this.esc = 2;
 				else if (b == ']')  this.esc = 3;
 				else                this.esc = 10;
-			    }
 			    else if (this.esc == 2)
 			    {
 				if ((('a' <= b) && (b <= 'z')) || (('A' <= b) && (b <= 'Z')))
 				    this.esc = 10;
 			    }
 			    else if ((this.esc == 3) && (b == 'P'))
-			    {
 				this.esc = ~0;
-			    }
 			    else if (this.esc < 0)
 			    {
 				this.esc--;
@@ -435,7 +430,10 @@ public class Unisay
      */
     private static void start(final String... args) throws IOException
     {
-	final String priv = "~/.local/share/unisay/".replace("~", Util.getProperty("HOME"));
+	String home = Util.getProperty("HOME");
+	if ((home == null) || (home.isEmpty()))
+	    home = System.getProperty("user.home");
+	final String priv = "~/.local/share/unisay/".replace("~", home);
 	final String publ = "/usr/share/unisay/";
 	
 	String nw =  "/-",  n = "-", ne = "-\\",
@@ -449,14 +447,15 @@ public class Unisay
 	final ArrayList<String> format = new ArrayList<String>();
 	final ArrayList<String> pony = new ArrayList<String>();
 	final ArrayList<String> say = new ArrayList<String>();
+	final ArrayList<String> mode = new ArrayList<String>();
+	final ArrayList<String> eye = new ArrayList<String>();
+	final ArrayList<String> tongue = new ArrayList<String>();
 	
 	boolean quote = false;
 	boolean random = false;
 	boolean dash = false;
-	boolean useCows = false;
-	boolean usePonies = false;
-	boolean colourX = false;
-	boolean colourP = false;
+	boolean useCows = false, usePonies = false;
+	boolean colourX = false, colourP = false;
 	
 	final String[] colourXargs = {"--256-colours", "--256colours", "--x-colours", "-X"};
 	final String[] colourPargs = {"--tty-colours", "--ttycolours", "--vt-colours", "-V"};
@@ -481,22 +480,22 @@ public class Unisay
 		                                                                              else                         colourX = true;
 	    else if (Util.equalsAny(arg, colourPargs))                                        if (colourX || colourP)      System.err.println("-V and -X may only be used once, and not togather.");
 		                                                                              else                         colourP = true;
+	    else if (Util.equalsAny(arg, "--mode", "-m"))                                                                  mode.add(args[++i]);
+	    else if (Util.equalsAny(arg, "--eye", "-e"))                                                                   eye.add(args[++i]);
+	    else if (Util.equalsAny(arg, "--tongue", "-t"))                                                                tongue.add(args[++i]);
 	    else if (arg.startsWith("-") || arg.startsWith("+"))
 	    {
 		if (Util.equalsAny(arg, "-w", "-I", "+I", "-N")) /* KEYWORD */
 		    i++;
 		else if (false == Util.equalsAny(arg, "--no-truncate", "--notruncate", "--notrunc", "-T"))
-		{
-		    System.err.println("Unrecognised option, assuming it is a pony file: " + arg);
-		    pony.add(arg);
-		}
+		    System.err.println("Unrecognised option: " + arg);
 	    }
 	    else
 		pony.add(arg);
 	}
 	final boolean linuxvt = colourX ? false : colourP ? true : Util.getProperty("TERM").equals("linux");
 	
-	final Vector<String> modes = new Vector<String>();
+	ArrayList<String> modes = new ArrayList<String>();
 	final HashMap<String, String> modeMap = new HashMap<String, String>();
 	
 	modeMap.put("borg",     "$eye==$$tongue=  $");      modes.add("$eye==$$tongue=  $");  // FIXME should be in a separate file
@@ -514,7 +513,23 @@ public class Unisay
 	{   modeMap.put("unamused", "$eye=σ$$tongue=  $");  modes.add("$eye=σ$$tongue=  $");
 	}
 	
-	byte[] oneMode = modes.get((int)(Math.random() * modes.size()) % modes.size()).getBytes("UTF-8");
+	if (mode.isEmpty() == false)
+	    modes = mode;
+	String _oneMode = modes.get((int)(Math.random() * modes.size()) % modes.size());
+	
+	if (eye.isEmpty() == false)
+	{
+	    final String oneEye = eye.get((int)(Math.random() * eye.size()) % eye.size());
+	    _oneMode += "$eye=" + oneEye.replace("\033", "\033\033").replace("$", "\033$") + "$";
+	}
+	
+	if (tongue.isEmpty() == false)
+	{
+	    final String oneTongue = tongue.get((int)(Math.random() * tongue.size()) % tongue.size());
+	    _oneMode += "$tongue=" + oneTongue.replace("\033", "\033\033").replace("$", "\033$") + "$";
+	}
+	
+	byte[] oneMode = _oneMode.getBytes("UTF-8");
 	
 	if ((useCows || usePonies) == false)
 	    useCows = usePonies = true;

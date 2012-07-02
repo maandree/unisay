@@ -107,14 +107,14 @@ if [ -f 'src/se/kth/maandree/javagen/ExceptionGenerator.java' ]; then
     ) | colourise &&
     
     ## generate exceptions code
-    javaSeven -ea -cp bin$jars "se.kth.maandree.javagen.ExceptionGenerator" -o bin -- $(find src | grep '.exceptions$')  2>&1  &&
+    javaSeven -ea -cp bin$jars "se.kth.maandree.javagen.ExceptionGenerator" -o bin -- $(find src | grep '\.exceptions$')  2>&1  &&
     echo -e '\n\n\n'  &&
     
     ## generate exceptions binaries
-    ( javacSeven $warns -cp bin$jars -source 7 -target 7 $(find bin | grep '.java$')  2>&1
+    ( javacSeven $warns -cp bin$jars -source 7 -target 7 $(find bin | grep '\.java$')  2>&1
     ) | colourise
 fi
 
 ## compile ponypipe
-( _javac $warns -cp .:bin$jars -s src -d bin $(find src | grep '.java$')  2>&1
+( _javac $warns -cp .:bin$jars -s src -d bin $(find src | grep '\.java$')  2>&1
 ) | colourise
