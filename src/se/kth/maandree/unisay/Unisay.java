@@ -481,9 +481,9 @@ public class Unisay
 		                                                                              else                         colourX = true;
 	    else if (Util.equalsAny(arg, colourPargs))                                        if (colourX || colourP)      System.err.println("-V and -X may only be used once, and not togather.");
 		                                                                              else                         colourP = true;
-	    else if (arg.startsWith("-"))
+	    else if (arg.startsWith("-") || arg.startsWith("+"))
 	    {
-		if (false == Util.equalsAny(arg, "--no-truncate", "--notruncate", "--notrunc", "-T"))
+		if (false == Util.equalsAny(arg, "--no-truncate", "--notruncate", "--notrunc", "-T", /* KEYWORD */ "-w", "-I", "+I", "-N"))
 		{
 		    System.err.println("Unrecognised option, assuming it is a pony file: " + arg);
 		    pony.add(arg);
