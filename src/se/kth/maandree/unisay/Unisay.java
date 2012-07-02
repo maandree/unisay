@@ -465,7 +465,7 @@ public class Unisay
         {
 	    final String arg = args[i];
 	    
-	    if (dash)                                                                                                      pony.add(arg);
+	    if      (dash)                                                                                                 pony.add(arg);
 	    else if (Util.equalsAny(arg, "--"))                                                                            dash = true;
 	    else if (Util.equalsAny(arg, "--random", "-r"))                                   if (random)                  System.err.println("--random (-r) should only be used once.");
 		                                                                              else                         random = true;
@@ -483,7 +483,9 @@ public class Unisay
 		                                                                              else                         colourP = true;
 	    else if (arg.startsWith("-") || arg.startsWith("+"))
 	    {
-		if (false == Util.equalsAny(arg, "--no-truncate", "--notruncate", "--notrunc", "-T", /* KEYWORD */ "-w", "-I", "+I", "-N"))
+		if (Util.equalsAny(arg, "-w", "-I", "+I", "-N")) /* KEYWORD */
+		    i++
+		else if (false == Util.equalsAny(arg, "--no-truncate", "--notruncate", "--notrunc", "-T"))
 		{
 		    System.err.println("Unrecognised option, assuming it is a pony file: " + arg);
 		    pony.add(arg);
