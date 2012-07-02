@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=640" />
+
+    <link rel="stylesheet" href="stylesheets/core.css" media="screen"/>
+    <link rel="stylesheet" href="stylesheets/mobile.css" media="handheld, only screen and (max-device-width:640px)"/>
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css"/>
+
+    <script type="text/javascript" src="javascripts/modernizr.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script type="text/javascript" src="javascripts/headsmart.min.js"></script>
+    <script type="text/javascript">
+      $(document).ready(function () {
+        $('#main_content').headsmart()
+      })
+    </script>
+    <title>Unisay by maandree</title>
+  </head>
+
+  <body>
+    <a id="forkme_banner" href="https://github.com/maandree/unisay">View on GitHub</a>
+    <div class="shell">
+
+      <header>
+        <span class="ribbon-outer">
+          <span class="ribbon-inner">
+            <h1>Unisay</h1>
+            <h2>cowsay+ponysay rewritten in Java, with added features such as pony quotes and full Unicode(!) support</h2>
+          </span>
+          <span class="left-tail"></span>
+          <span class="right-tail"></span>
+        </span>
+      </header>
+
+      <section id="downloads">
+        <span class="inner">
+          <a href="https://github.com/maandree/unisay/zipball/master" class="zip"><em>download</em> .ZIP</a><a href="https://github.com/maandree/unisay/tarball/master" class="tgz"><em>download</em> .TGZ</a>
+        </span>
+      </section>
+
+
+      <span class="banner-fix"></span>
+
+
+      <section id="main_content">
+        <p>cowsay+ponysay rewritten in Java, with added features such as
+pony quotes and full Unicode(!) support.</p>
+
+<p><img src="https://github.com/maandree/unisay/raw/master/screenshot.png" alt="screenshot"></p>
+
+<p>Note that unisay does not use same options as ponysay or cowsay,
+start with --help for more information, with or without options.</p>
+
+<h2>Install</h2>
+
+<p>To install unisay, just run the command</p>
+
+<pre><code>sudo make install
+</code></pre>
+
+<h3>Displaying fortune cookies</h3>
+
+<p>This requires that you have the <code>fortune</code> command installed.
+To install the command on Arch Linux run the installation command:</p>
+
+<pre><code>pacman -S fortune-mod
+</code></pre>
+
+<p>There are several additions to fortune available in AUR.</p>
+
+<p>Fortune cookies are displayed by running:</p>
+
+<pre><code>fortune | unisay
+</code></pre>
+
+<p>If you want ponified fortune cookies use <code>pinkiepie</code> (<code>pinkie</code>) instead
+of <code>fortune</code>. pinkie-pie is available in AUR under the name <code>pinkie-pie-git</code>.</p>
+
+<h3>Run on terminal startup</h3>
+
+<p>To run, for example, <code>unisay -q -p unicode -P</code> when the terminal starts,
+but <code>unisay -q -p linux-vt -P</code> when using Linux VT; add the follow to your <code>~/.bashrc</code>:</p>
+
+<pre><code>if [ "$TERM" = "linux" ]; then
+    unisay -q -p linux-vt -P
+else
+    unisay -q -p unicode -P
+fi
+</code></pre>
+
+<h3>Ponies in TTY (Linux VT)</h3>
+
+<p>If you have a custom colour palette edit your <code>~/.bashrc</code> and add</p>
+
+<pre><code>if [ "$TERM" = "linux" ]; then
+    function unisay
+    {
+        exec unisay $@
+        #RESET PALETTE HERE
+    }
+fi
+</code></pre>
+      </section>
+
+      <footer>
+        <span class="ribbon-outer">
+          <span class="ribbon-inner">
+            <p>this project by <a href="https://github.com/maandree">maandree</a> can be found on <a href="https://github.com/maandree/unisay">GitHub</a></p>
+          </span>
+          <span class="left-tail"></span>
+          <span class="right-tail"></span>
+        </span>
+        <p>Generated with <a href="http://pages.github.com">GitHub Pages</a> using Merlot</p>
+        <span class="octocat"></span>
+      </footer>
+
+    </div>
+
+    
+  </body>
+</html>
