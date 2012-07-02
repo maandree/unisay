@@ -99,7 +99,7 @@ for opt in "$@"; do
 	    }
 	fi
 	function _javac()
-	{   javacSeven "$@"
+	{   javacSeven -source 6 -target 6 "$@"
 	}
 	errs="-err:conditionAssign,noEffectAssign,enumIdentifier,hashCode"
 	warns=$errs" -warn:allDeadCode,allDeprecation,allOver-ann,all-static-method,assertIdentifier,boxing,charConcat,compareIdentical,constructorName,deadCode,dep-ann,deprecation,"
