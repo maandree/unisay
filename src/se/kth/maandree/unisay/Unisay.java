@@ -208,7 +208,35 @@ public class Unisay
 		System.out.println("                actual terminal capabilities. This if the terminal is");
 		System.out.println("                faked or is not the actual displayer.");
 	    }
-	    // FIXME document -m --mode -e --eye -t --tongue
+	    if (mode || allargs)
+	    {
+		System.out.print("\n\n");
+		System.out.println("  --mode");
+		System.out.println("  -m");
+		System.out.println("                Specify a cow mode, multiple can be specified for a random");
+		System.out.println("                selection. If the mode is not recognised, it is parsed.");
+		System.out.println("                The defined modes are borg, dead, excited, greedy, happy,");
+		System.out.println("                normal, paranoid, stoned, tired, tongue, youthful, as well");
+		System.out.println("                as unamused this is not available under TTY (Linux VT).");
+	    }
+	    if (eye || allargs)
+	    {
+		System.out.print("\n\n");
+		System.out.println("  --eye");
+		System.out.println("  -e");
+		System.out.println("                Specify a character to use for eyes on cows, this");
+		System.out.println("                overrides --mode (-m), and multiple can be specified");
+		System.out.println("                for a random selection.");
+	    }
+	    if (tongue || allargs)
+	    {
+		System.out.print("\n\n");
+		System.out.println("  --tongue");
+		System.out.println("  -t");
+		System.out.println("                Specify a two character string to use for eyes on cows,");
+		System.out.println("                this overrides --mode (-m), and multiple can be specified");
+		System.out.println("                for a random selection.");
+	    }
 	    if (icp || allargs)
 	    {
 		System.out.print("\n\n");
@@ -500,6 +528,7 @@ public class Unisay
 	
 	modeMap.put("borg",     "$eye==$$tongue=  $");      modes.add("$eye==$$tongue=  $");  // FIXME should be in a separate file
 	modeMap.put("dead",     "$eye=X$$tongue=U $");      modes.add("$eye=X$$tongue=U $");
+	modeMap.put("excited",  "$eye=O$$tongue=  $");      modes.add("$eye=O$$tongue=  $");
 	modeMap.put("greedy",   "$eye=\033$$$tongue=  $");  modes.add("$eye=\033$$$tongue=  $");
 	modeMap.put("happy",    "$eye=^$$tongue=  $");      modes.add("$eye=^$$tongue=  $");
 	modeMap.put("normal",   "$eye=o$$tongue=  $");      modes.add("$eye=o$$tongue=  $");
@@ -507,7 +536,6 @@ public class Unisay
 	modeMap.put("stoned",   "$eye=*$$tongue=U $");      modes.add("$eye=*$$tongue=U $");
 	modeMap.put("tired",    "$eye=-$$tongue=  $");      modes.add("$eye=-$$tongue=  $");
 	modeMap.put("tongue",   "$eye=o$$tongue=U $");      modes.add("$eye=o$$tongue=U $");
-	modeMap.put("wired",    "$eye=O$$tongue=  $");      modes.add("$eye=O$$tongue=  $");
 	modeMap.put("youthful", "$eye=.$$tongue=  $");      modes.add("$eye=.$$tongue=  $");
 	if (linuxvt == false)
 	{   modeMap.put("unamused", "$eye=σ$$tongue=  $");  modes.add("$eye=σ$$tongue=  $");
@@ -516,6 +544,8 @@ public class Unisay
 	if (mode.isEmpty() == false)
 	    modes = mode;
 	String _oneMode = modes.get((int)(Math.random() * modes.size()) % modes.size());
+	if (modeMap.contains(_oneMode))
+	    _oneMode = modeMap.get(_oneMode);
 	
 	if (eye.isEmpty() == false)
 	{

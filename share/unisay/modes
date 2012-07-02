@@ -2,6 +2,7 @@
 
 borg:     $eye==$$tongue=  $
 dead:     $eye=X$$tongue=U $
+excited:  $eye=O$$tongue=  $
 greedy: $eye=$$$tongue=  $
 happy:    $eye=^$$tongue=  $
 normal:   $eye=o$$tongue=  $
@@ -9,7 +10,6 @@ paranoid: $eye=@$$tongue=  $
 stoned:   $eye=*$$tongue=U $
 tired:    $eye=-$$tongue=  $
 tongue:   $eye=o$$tongue=U $
-wired:    $eye=O$$tongue=  $
 youthful: $eye=.$$tongue=  $
 
 @unicode
