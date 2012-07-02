@@ -2,7 +2,7 @@ all: unisay
 
 unisay:
 	javac -cp . -s src -d . $$(find ./src | grep '\.java$$')
-	jar -cfm unisay.jar META-INF/MANIFEST.MF $$(find ./se | 'grep \.class$$')
+	jar -cfm unisay.jar META-INF/MANIFEST.MF $$(find ./se | grep '\.class$$')
 	rm -r se
 
 install: all
@@ -14,7 +14,7 @@ install: all
 	install -d "${DESTDIR}/usr/share/unisay/pony"
 	install -d "${DESTDIR}/usr/share/unisay/ponyquotes"
 	install -d "${DESTDIR}/usr/share/unisay/ttypony"
-	install -m 755 bin/unisay unisay.jar "${DESTDIR}/usr/bin"
+	install -m 755 unisay{,.jar} "${DESTDIR}/usr/bin"
 	install -m 644 share/bash-completion/completions/* "${DESTDIR}/usr/share/bash-completion/completions"
 	install -m 644 share/licenses/unisay/* "${DESTDIR}/usr/share/licenses/unisay"
 	install -m 644 share/unisay/modes "${DESTDIR}/usr/share/unisay/modes"
