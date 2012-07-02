@@ -471,7 +471,7 @@ public class Unisay
 		rc.add(arg);
 	
 	final String[] _rc = new String[rc.size()];
-	System.arraycopy(rc, 0, _rc, 0, _rc.length);
+	rc.toArray(_rc);
 	return _rc;
     }
     
