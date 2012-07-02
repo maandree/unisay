@@ -513,9 +513,9 @@ public class Unisay
 	    else if (Util.equalsAny(arg, "--tongue", "-t"))                                                                tongue.add(args[++i]);
 	    else if (arg.startsWith("-") || arg.startsWith("+"))
 	    {
-		if (Util.equalsAny(arg, "-w", "-I", "+I", "-N")) /* KEYWORD */
+		if (Util.equalsAny(arg, "-w")) /* KEYWORD */
 		    i++;
-		else if (false == Util.equalsAny(arg, "--no-truncate", "--notruncate", "--notrunc", "-T"))
+		else if (false == Util.equalsAny(arg, "--no-truncate", "--notruncate", "--notrunc", "-T", /* KEYWORD */ "-I", "+I", "-N"))
 		    System.err.println("Unrecognised option: " + arg);
 	    }
 	    else
@@ -544,7 +544,7 @@ public class Unisay
 	if (mode.isEmpty() == false)
 	    modes = mode;
 	String _oneMode = modes.get((int)(Math.random() * modes.size()) % modes.size());
-	if (modeMap.contains(_oneMode))
+	if (modeMap.containsKey(_oneMode))
 	    _oneMode = modeMap.get(_oneMode);
 	
 	if (eye.isEmpty() == false)
