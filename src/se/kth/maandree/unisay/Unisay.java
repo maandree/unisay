@@ -376,6 +376,7 @@ public class Unisay
 			public void write(final int b) throws IOException
 			{
 			    if (this.esc == 0)
+			    {
 				if (b == '\n')
 				{
 				    if (x >= width)
@@ -393,6 +394,7 @@ public class Unisay
 				}
 				else if (b == '\033')
 				    this.esc = 1;
+			    }
 			    else if (this.esc == 1)
 				if      (b == '[')  this.esc = 2;
 				else if (b == ']')  this.esc = 3;
