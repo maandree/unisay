@@ -1,1 +1,9 @@
-java -jar "$0".jar "$@"
+if [ "$TERM" = "linux" ]; then
+   if [ "$UNISAY_BOTTOM" = 'yes' ] || [ "$UNISAY_BOTTOM" = 'y' ] || [ "$UNISAY_BOTTOM" = '1' ]; then
+      java -jar "$0".jar "$@" | tac | head --lines=$(( $(stty size <&2 | cut -d ' ' -f 1) - 2 )) | tac
+   else
+      java -jar "$0".jar "$@" | head --lines=$(( $(stty size <&2 | cut -d ' ' -f 1) - 2 ))
+   fi
+else
+   java -jar "$0".jar "$@"
+fi
