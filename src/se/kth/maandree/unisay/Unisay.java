@@ -461,14 +461,9 @@ public class Unisay
 	final ArrayList<String> rc = new ArrayList<String>();
 	
 	for (final String arg : args)
-	    if (arg.startsWith("--"))
-		rc.add(arg);
-	    else if (arg.startsWith("-"))
-		for (int i = 1, n = arg.length(); i < n; i++)
-		    rc.add("-" + arg.charAt(i));
-	    else if (arg.startsWith("+"))
-		for (int i = 1, n = arg.length(); i < n; i++)
-		    rc.add("+" + arg.charAt(i));
+	    if      (arg.startsWith("--"))  rc.add(arg);
+	    else if (arg.startsWith("-"))   for (int i = 1, n = arg.length(); i < n; i++)  rc.add("-" + arg.charAt(i));
+	    else if (arg.startsWith("+"))   for (int i = 1, n = arg.length(); i < n; i++)  rc.add("+" + arg.charAt(i));
 	    else
 		rc.add(arg);
 	
@@ -494,26 +489,18 @@ public class Unisay
 	final String priv = "~/.local/share/unisay/".replace("~", home);
 	final String publ = "/usr/share/unisay/";
 	
-	String nw =  "/-",  n = "-", ne = "-\\",
-	        w =  "|  ",           e = "  |",
-	       sw = "\\-",  s = "-", se = "-/", l = "\\", L = "/";
-	
-	nw += "\n| ";      ne += "\n |";
-	sw = "| \n" + sw;  se = " |\n" + se;
-	n += "\n ";        s = " \n" + s;
-	
 	final ArrayList<String> format = new ArrayList<String>();
-	final ArrayList<String> pony = new ArrayList<String>();
-	final ArrayList<String> say = new ArrayList<String>();
-	final ArrayList<String> mode = new ArrayList<String>();
-	final ArrayList<String> eye = new ArrayList<String>();
+	final ArrayList<String> pony   = new ArrayList<String>();
+	final ArrayList<String> say    = new ArrayList<String>();
+	final ArrayList<String> mode   = new ArrayList<String>();
+	final ArrayList<String> eye    = new ArrayList<String>();
 	final ArrayList<String> tongue = new ArrayList<String>();
 	
-	boolean quote = false;
-	boolean random = false;
-	boolean dash = false;
+	boolean quote   = false;
+	boolean random  = false;
+	boolean dash    = false;
 	boolean useCows = false, usePonies = false;
-	boolean colourX = false, colourP = false;
+	boolean colourX = false, colourP   = false;
 	
 	final String[] colourXargs = {"--256-colours", "--256colours", "--x-colours", "-X"};
 	final String[] colourPargs = {"--tty-colours", "--ttycolours", "--vt-colours", "-V"};
@@ -553,50 +540,12 @@ public class Unisay
 	}
 	final boolean linuxvt = colourX ? false : colourP ? true : Util.getProperty("TERM").equals("linux");
 	
-	ArrayList<String> modes = new ArrayList<String>();
-	final HashMap<String, String> modeMap = new HashMap<String, String>();
-	
-	modeMap.put("borg",     "$eye==$$tongue=  $");      modes.add("$eye==$$tongue=  $");  // FIXME should be in a separate file
-	modeMap.put("dead",     "$eye=X$$tongue=U $");      modes.add("$eye=X$$tongue=U $");
-	modeMap.put("excited",  "$eye=O$$tongue=  $");      modes.add("$eye=O$$tongue=  $");
-	modeMap.put("greedy",   "$eye=\033$$$tongue=  $");  modes.add("$eye=\033$$$tongue=  $");
-	modeMap.put("happy",    "$eye=^$$tongue=  $");      modes.add("$eye=^$$tongue=  $");
-	modeMap.put("normal",   "$eye=o$$tongue=  $");      modes.add("$eye=o$$tongue=  $");
-	modeMap.put("paranoid", "$eye=@$$tongue=  $");      modes.add("$eye=@$$tongue=  $");
-	modeMap.put("stoned",   "$eye=*$$tongue=U $");      modes.add("$eye=*$$tongue=U $");
-	modeMap.put("tired",    "$eye=-$$tongue=  $");      modes.add("$eye=-$$tongue=  $");
-	modeMap.put("tongue",   "$eye=o$$tongue=U $");      modes.add("$eye=o$$tongue=U $");
-	modeMap.put("youthful", "$eye=.$$tongue=  $");      modes.add("$eye=.$$tongue=  $");
-	if (linuxvt == false)
-	{   modeMap.put("unamused", "$eye=σ$$tongue=  $");  modes.add("$eye=σ$$tongue=  $");
-	}
-	
-	if (mode.isEmpty() == false)
-	    modes = mode;
-	String _oneMode = modes.get((int)(Math.random() * modes.size()) % modes.size());
-	if (modeMap.containsKey(_oneMode))
-	    _oneMode = modeMap.get(_oneMode);
-	
-	if (eye.isEmpty() == false)
-	{
-	    final String oneEye = eye.get((int)(Math.random() * eye.size()) % eye.size());
-	    _oneMode += "$eye=" + oneEye.replace("\033", "\033\033").replace("$", "\033$") + "$";
-	}
-	
-	if (tongue.isEmpty() == false)
-	{
-	    final String oneTongue = tongue.get((int)(Math.random() * tongue.size()) % tongue.size());
-	    _oneMode += "$tongue=" + oneTongue.replace("\033", "\033\033").replace("$", "\033$") + "$";
-	}
-	
-	byte[] oneMode = _oneMode.getBytes("UTF-8");
+	final byte[] oneMode = getMode(linuxvt, mode, eye, tongue);
 	
 	if ((useCows || usePonies) == false)
 	    useCows = usePonies = true;
 	
 	String oneSay;
-	String onePony;
-	String oneFormat;
 	InputStream sayfeed = System.in;
 	
 	if (say.isEmpty() == false)
@@ -604,134 +553,13 @@ public class Unisay
 	else
 	    oneSay = null; //we will catch it later
 	
-	final String privateDir    = priv + (linuxvt ? "tty" : "") + "pony/";
-	final String  publicDir    = publ + (linuxvt ? "tty" : "") + "pony/";
-	final String privateCowDir = priv + "cow/";
-	final String  publicCowDir = publ + "cow/";
-	
-	if (quote)
+	String[] tmpzarr = getPony(pony, useCows, usePonies, quote, linuxvt, random, publ, priv);
+	String onePony = tmpzarr[0];
+	if (tmpzarr[1] != null)
 	{
-	    final String privateQuotesDir = priv + "ponyquotes/";
-	    final String  publicQuotesDir = publ + "ponyquotes/";
-	    
-	    final HashMap<String, String> ponymap = new HashMap<String, String>();
-	    final HashSet<String> qset = new HashSet<String>();
-	    final HashSet<String> pset = new HashSet<String>();
-	    
-	    for (final String p : pony)
-		if (p.contains("/"))
-		    pset.add(p.substring(p.lastIndexOf('/') + 1));
-		else
-		    pset.add(p);
-	    
-	    for (final String dir : new String[] {publicQuotesDir, privateQuotesDir, })
-		if ((new File(dir)).exists())
-		    for (final String file : (new File(dir)).list())
-			if (file.endsWith("~") == false)
-			{
-			    final String[] ponies = file.substring(0, file.lastIndexOf('.')).split("\\+");
-			    for (final String p : ponies)
-				qset.add(p);
-			}
-	    
-	    if (usePonies)
-		for (final String dir : new String[] {publicDir, privateDir, })
-		    if ((new File(dir)).exists())
-			for (final String file : (new File(dir)).list())
-			    if ((file.equals("default") == false) && (qset.contains(file)))
-				if (pony.isEmpty() || (pset.contains(file)))
-				    ponymap.put(file, dir + file);
-	    
-	    if (useCows)
-		for (final String dir : new String[] {publicCowDir, privateCowDir, })
-		    if ((new File(dir)).exists())
-			for (final String file : (new File(dir)).list())
-			    if ((file.equals("default") == false) && (qset.contains(file)))
-				if (pony.isEmpty() || (pset.contains(file)))
-				    ponymap.put(file, dir + file);
-	    
-	    final ArrayList<ArrayList<String>> qlist = new ArrayList<ArrayList<String>>();
-	    
-	    for (final String dir : new String[] {publicQuotesDir, privateQuotesDir, })
-		if ((new File(dir)).exists())
-		    for (final String file : (new File(dir)).list())
-			if (file.endsWith("~") == false)
-			{
-			    final ArrayList<String> values = new ArrayList<String>();
-			    values.add(dir + file);
-			    final String[] ponies = file.substring(0, file.lastIndexOf('.')).split("\\+");
-			    for (final String p : ponies)
-				if (ponymap.containsKey(p))
-				    values.add(p);
-			    if (values.size() > 1)
-				qlist.add(values);
-			}
-	    
-	    final ArrayList<String> q = qlist.get(((int)(Math.random() * qlist.size())) % qlist.size());
-	    final String qp = q.get(1 + ((int)(Math.random() * (q.size() - 1))) % (q.size() - 1));
-	    final String qq = q.get(0);
-	    
-	    onePony = ponymap.get(qp);
 	    oneSay = null;
-	    sayfeed = new BufferedInputStream(new FileInputStream(new File(qq)));
+	    sayfeed = new BufferedInputStream(new FileInputStream(new File(tmpzarr[1])));
 	}
-	else if (pony.isEmpty() == false)
-	{
-	    onePony = pony.get(((int)(Math.random() * pony.size())) % pony.size());
-	    
-	    if ((new File(onePony)).exists() == false)
-	    {
-		final String privatePony    = privateDir    + onePony;
-		final String  publicPony    =  publicDir    + onePony;
-		final String privateCowPony = privateCowDir + onePony;
-		final String  publicCowPony =  publicCowDir + onePony;
-		
-		if      (usePonies && (new File(privatePony   )).exists())  onePony = privatePony;
-		else if (usePonies && (new File( publicPony   )).exists())  onePony =  publicPony;
-		else if (useCows   && (new File(privateCowPony)).exists())  onePony = privateCowPony;
-		else if (useCows   && (new File( publicCowPony)).exists())  onePony =  publicCowPony;
-	    }
-	}
-	else
-	{
-	    final String privateDefault    = privateDir    + "default";
-	    final String  publicDefault    =  publicDir    + "default";
-	    final String privateCowDefault = privateCowDir + "default";
-	    final String  publicCowDefault =  publicCowDir + "default";
-	    
-	    if      (usePonies && (new File(privateDefault   )).exists() && !random)  onePony = privateDefault;
-	    else if (usePonies && (new File( publicDefault   )).exists() && !random)  onePony =  publicDefault;
-	    else if (useCows   && (new File(privateCowDefault)).exists() && !random)  onePony = privateCowDefault;
-	    else if (useCows   && (new File( publicCowDefault)).exists() && !random)  onePony =  publicCowDefault;
-	    else
-	    {
-		pony.clear();
-		
-		if (usePonies)
-		    for (final String dir : new String[] {privateDir, publicDir, })
-			if ((new File(dir)).exists())
-			    for (final String file : (new File(dir)).list())
-				if (file.equals("default") == false)
-				    pony.add(dir + file);
-		
-		if (useCows)
-		    for (final String dir : new String[] {privateCowDir, publicCowDir, })
-			if ((new File(dir)).exists())
-			    for (final String file : (new File(dir)).list())
-				if (file.equals("default") == false)
-				    pony.add(dir + file);
-		
-		if (pony.isEmpty())
-		    onePony = null;
-		else
-		    onePony = pony.get(((int)(Math.random() * pony.size())) % pony.size());
-	    }
-	}
-	
-	if (format.isEmpty() == false)
-	    oneFormat = format.get(((int)(Math.random() * format.size())) % format.size());
-	else
-	    oneFormat = null;
 	
 	if (onePony == null)
 	{
@@ -743,6 +571,202 @@ public class Unisay
 	    System.err.println("The selected (or choosen) pony file does not exist.");
 	    return;
 	}
+	
+	final int[][] mne, me, mse, ms, msw, mw, mnw, mn, ml, mL;
+	final int[][][] tmpiiiarr = getFormat(format, priv, publ);
+	mne = tmpiiiarr[0]; me = tmpiiiarr[1]; mse = tmpiiiarr[2]; ms = tmpiiiarr[3]; msw = tmpiiiarr[4];
+	mw = tmpiiiarr[5]; mnw = tmpiiiarr[6]; mn = tmpiiiarr[7]; ml = tmpiiiarr[8]; mL = tmpiiiarr[9];
+	
+	final ArrayList<int[]> lens = new ArrayList<int[]>();
+	final ArrayList<ArrayList<byte[]>> lines = new ArrayList<ArrayList<byte[]>>();
+	getSay(oneSay, sayfeed, lens, lines);
+	
+	while ((lines.size() > 1) && (lines.get(0).isEmpty()))
+	{
+	    lines.remove(0);
+	    lens.remove(0);
+	}
+	while ((lines.size() > 1) && (lines.get(lines.size() - 1).isEmpty()))
+	{
+	    lines.remove(lines.size() - 1);
+	    lens.remove(lens.size() - 1);
+	}
+	
+	int maxlen = 0;
+	for (final int[] len : lens)
+	    if (maxlen < len[0])
+		maxlen = len[0];
+	
+	final Baloon baloon = new Baloon(lens, maxlen, lines, mnw, mn, mne, me[0], mse, ms, msw, mw[0]);
+	say(onePony, baloon, ml[0], mL[0], oneMode);
+    }
+    
+    
+    /**
+     * 
+     *///FIXME document!
+    private static void getSay(final String oneSay, final InputStream sayfeed, final ArrayList<int[]> lens, final ArrayList<ArrayList<byte[]>> lines) throws IOException
+    {
+	if (oneSay != null)
+	{
+	    final byte[] expand = new byte[8];
+	    for (int i = 0; i < 8; i++)
+		expand[i] = ' ';
+	    
+	    boolean esc = false;
+	    
+	    for (final String line : oneSay.split("\n"))
+	    {
+		int len = 0;
+		final byte[] bs = line.getBytes("UTF-8");
+		final ArrayList<byte[]> list = new ArrayList<byte[]>();
+		final int[] tabs = new int[bs.length];
+		int tabptr = 0;
+		
+		for (int i = 0, nn = bs.length; i < nn; i++)
+		    if (bs[i] == '\t')
+			tabs[tabptr++] = i;
+		
+		int start = 0;
+		for (int i = 0, nn = tabptr; i < nn; i++)
+		{
+		    final int end = tabs[i], m;
+		    final byte[] part = new byte[m = end - start];
+		    System.arraycopy(bs, start, part, 0, m);
+		    list.add(part);
+		    final byte[] exp = new byte[8 - (m & 7)]; //not associative!
+		    System.arraycopy(expand, 0, exp, 0, exp.length);
+		    list.add(exp);
+		    start = end + 1;
+		    len += (m | 7) + 1;
+		}
+		final int end = bs.length, m;
+		len += m = end - start;
+		final byte[] part = new byte[m];
+		System.arraycopy(bs, start, part, 0, m);
+		list.add(part);
+		
+		for (final byte[] chunk : list)
+		    for (final byte b : chunk)
+			if (b == 033)
+			{
+			    esc = true;
+			    len--;
+			}
+		        else if (b == 8)
+			    len -= 2; //damn fortune cookies!
+			else if (esc)
+			{
+			    len--;
+			    esc = (b != (byte)'m');
+			}
+			else if ((b & 0xC0) == 0x80)
+			    len--;
+		
+		lines.add(list);
+		lens.add(new int[] { len });
+	    }
+	}
+	else
+	{
+	    ArrayList<byte[]> list = new ArrayList<byte[]>();
+	    final int SIZE = 64;
+	    byte[] buf = new byte[SIZE];
+	    int ptr = 0;
+	    int len = 0;
+	    
+	    boolean esc = false;
+	    for (int d; (d = sayfeed.read()) != -1;)
+		if (d == '\n')
+		{
+		    if (ptr > 0)
+		    {
+			byte[] app = new byte[ptr];
+			System.arraycopy(buf, 0, app, 0, ptr);
+			list.add(app);
+		    }
+		    lines.add(list);
+		    list = new ArrayList<byte[]>();
+		    lens.add(new int[] { len });
+		    ptr = 0;
+		    len = 0;
+		}
+		else if (d == '\t')
+		{
+		    final int exp = 8 - (len & 7);
+		    len += exp;
+		    for (int i = 0; i < exp; i++)
+		    {
+			buf[ptr++] = (byte)' ';
+			if (ptr == SIZE)
+			{
+			    list.add(buf);
+			    buf = new byte[SIZE];
+			    ptr = 0;
+			}
+		    }
+		}
+		else
+		{
+		    if ((d & 0xC0) != 0x80)
+			if (d == '\033')
+			    esc = true;
+			else if (!esc)
+			    if (d == 8)
+				len--; //damn fortune cookies!
+			    else
+				len++;
+			else if (d == 'm')
+			    esc = false;
+		    buf[ptr++] = (byte)d;
+		    if (ptr == SIZE)
+		    {
+			list.add(buf);
+			buf = new byte[SIZE];
+			ptr = 0;
+		    }
+		}
+	    
+	    if (sayfeed != System.in)
+		sayfeed.close();
+	    
+	    if (ptr > 0)
+	    {
+		byte[] app = new byte[ptr];
+		System.arraycopy(buf, 0, app, 0, ptr);
+		list.add(app);
+	    }
+	    lens.add(new int[] { len });
+	    lines.add(list);
+	}
+    }
+    
+    
+    /**
+     * Gets the baloon format
+     * 
+     * @param   format     -p
+     * @param   publ       ~/.local/share/unisay/
+     * @param   priv       /usr/share/unisay/
+     * @return             {mne, me, mse, ms, msw, mw, mnw, mn, ml, mL}
+     * 
+     * @throws  IOException  On IO exception
+     */
+    private static int[][][] getFormat(final ArrayList<String> format, final String publ, final String priv) throws IOException
+    {
+	String nw =  "/-",  n = "-", ne = "-\\",
+	        w =  "|  ",           e = "  |",
+	       sw = "\\-",  s = "-", se = "-/", l = "\\", L = "/";
+	
+	nw += "\n| ";      ne += "\n |";
+	sw = "| \n" + sw;  se = " |\n" + se;
+	n += "\n ";        s = " \n" + s;
+	
+	String oneFormat;
+	if (format.isEmpty() == false)
+	    oneFormat = format.get(((int)(Math.random() * format.size())) % format.size());
+	else
+	    oneFormat = null;
 	
 	if (oneFormat != null)
 	    if ((new File(oneFormat)).exists() == false)
@@ -896,189 +920,203 @@ public class Unisay
 	    map.get("\\:").toArray(ml);   map.get("/:").toArray(mL);
 	}
 	
-	final ArrayList<int[]> lens = new ArrayList<int[]>();
-	final ArrayList<ArrayList<byte[]>> lines = new ArrayList<ArrayList<byte[]>>();
-	if (oneSay != null)
+	return new int[][][] { mne, me, mse, ms, msw, mw, mnw, mn, ml, mL };
+    }
+    
+    
+    /**
+     * Get the pony
+     * 
+     * @param   pony       Selected ponies
+     * @param   useCows    -C or -A
+     * @param   usePonies  -P or -A
+     * @param   quote      -q
+     * @param   linuxvt    Whether the terminal is Linux VT ($TERM = 'linux')
+     * @param   random     -r
+     * @param   publ       ~/.local/share/unisay/
+     * @param   priv       /usr/share/unisay/
+     * @return             { pony, say-file? }
+     */
+    private static String[] getPony(final ArrayList<String> pony, final boolean useCows, final boolean usePonies, final boolean quote, 
+				    final boolean linuxvt, final boolean random, final String publ, final String priv)
+    {
+	final String privateDir    = priv + (linuxvt ? "tty" : "") + "pony/";
+	final String  publicDir    = publ + (linuxvt ? "tty" : "") + "pony/";
+	final String privateCowDir = priv + "cow/";
+	final String  publicCowDir = publ + "cow/";
+	
+	String onePony;
+	String qq = null;
+	if (quote)
 	{
-	    final byte[] expand = new byte[8];
-	    for (int i = 0; i < 8; i++)
-		expand[i] = ' ';
+	    final String privateQuotesDir = priv + "ponyquotes/";
+	    final String  publicQuotesDir = publ + "ponyquotes/";
 	    
-	    boolean esc = false;
+	    final HashMap<String, String> ponymap = new HashMap<String, String>();
+	    final HashSet<String> qset = new HashSet<String>();
+	    final HashSet<String> pset = new HashSet<String>();
 	    
-	    for (final String line : oneSay.split("\n"))
+	    for (final String p : pony)
+		if (p.contains("/"))
+		    pset.add(p.substring(p.lastIndexOf('/') + 1));
+		else
+		    pset.add(p);
+	    
+	    for (final String dir : new String[] {publicQuotesDir, privateQuotesDir, })
+		if ((new File(dir)).exists())
+		    for (final String file : (new File(dir)).list())
+			if (file.endsWith("~") == false)
+			{
+			    final String[] ponies = file.substring(0, file.lastIndexOf('.')).split("\\+");
+			    for (final String p : ponies)
+				qset.add(p);
+			}
+	    
+	    if (usePonies)
+		for (final String dir : new String[] {publicDir, privateDir, })
+		    if ((new File(dir)).exists())
+			for (final String file : (new File(dir)).list())
+			    if ((file.equals("default") == false) && (qset.contains(file)))
+				if (pony.isEmpty() || (pset.contains(file)))
+				    ponymap.put(file, dir + file);
+	    
+	    if (useCows)
+		for (final String dir : new String[] {publicCowDir, privateCowDir, })
+		    if ((new File(dir)).exists())
+			for (final String file : (new File(dir)).list())
+			    if ((file.equals("default") == false) && (qset.contains(file)))
+				if (pony.isEmpty() || (pset.contains(file)))
+				    ponymap.put(file, dir + file);
+	    
+	    final ArrayList<ArrayList<String>> qlist = new ArrayList<ArrayList<String>>();
+	    
+	    for (final String dir : new String[] {publicQuotesDir, privateQuotesDir, })
+		if ((new File(dir)).exists())
+		    for (final String file : (new File(dir)).list())
+			if (file.endsWith("~") == false)
+			{
+			    final ArrayList<String> values = new ArrayList<String>();
+			    values.add(dir + file);
+			    final String[] ponies = file.substring(0, file.lastIndexOf('.')).split("\\+");
+			    for (final String p : ponies)
+				if (ponymap.containsKey(p))
+				    values.add(p);
+			    if (values.size() > 1)
+				qlist.add(values);
+			}
+	    
+	    final ArrayList<String> q = qlist.get(((int)(Math.random() * qlist.size())) % qlist.size());
+	    final String qp = q.get(1 + ((int)(Math.random() * (q.size() - 1))) % (q.size() - 1));
+	    onePony = ponymap.get(qp);
+	    qq = q.get(0);
+	}
+	else if (pony.isEmpty() == false)
+	{
+	    onePony = pony.get(((int)(Math.random() * pony.size())) % pony.size());
+	    
+	    if ((new File(onePony)).exists() == false)
 	    {
-		int len = 0;
-		final byte[] bs = line.getBytes("UTF-8");
-		final ArrayList<byte[]> list = new ArrayList<byte[]>();
-		final int[] tabs = new int[bs.length];
-		int tabptr = 0;
+		final String privatePony    = privateDir    + onePony;
+		final String  publicPony    =  publicDir    + onePony;
+		final String privateCowPony = privateCowDir + onePony;
+		final String  publicCowPony =  publicCowDir + onePony;
 		
-		for (int i = 0, nn = bs.length; i < nn; i++)
-		    if (bs[i] == '\t')
-			tabs[tabptr++] = i;
-		
-		int start = 0;
-		for (int i = 0, nn = tabptr; i < nn; i++)
-		{
-		    final int end = tabs[i], m;
-		    final byte[] part = new byte[m = end - start];
-		    System.arraycopy(bs, start, part, 0, m);
-		    list.add(part);
-		    final byte[] exp = new byte[8 - (m & 7)]; //not associative!
-		    System.arraycopy(expand, 0, exp, 0, exp.length);
-		    list.add(exp);
-		    start = end + 1;
-		    len += (m | 7) + 1;
-		}
-		final int end = bs.length, m;
-		len += m = end - start;
-		final byte[] part = new byte[m];
-		System.arraycopy(bs, start, part, 0, m);
-		list.add(part);
-		
-		for (final byte[] chunk : list)
-		    for (final byte b : chunk)
-			if (b == 033)
-			{
-			    esc = true;
-			    len--;
-			}
-		        else if (b == 8)
-			    len -= 2; //damn fortune cookies!
-			else if (esc)
-			{
-			    len--;
-			    esc = (b != (byte)'m');
-			}
-			else if ((b & 0xC0) == 0x80)
-			    len--;
-		
-		lines.add(list);
-		lens.add(new int[] { len });
+		if      (usePonies && (new File(privatePony   )).exists())  onePony = privatePony;
+		else if (usePonies && (new File( publicPony   )).exists())  onePony =  publicPony;
+		else if (useCows   && (new File(privateCowPony)).exists())  onePony = privateCowPony;
+		else if (useCows   && (new File( publicCowPony)).exists())  onePony =  publicCowPony;
 	    }
 	}
 	else
 	{
-	    ArrayList<byte[]> list = new ArrayList<byte[]>();
-	    final int SIZE = 64;
-	    byte[] buf = new byte[SIZE];
-	    int ptr = 0;
-	    int len = 0;
+	    final String privateDefault    = privateDir    + "default";
+	    final String  publicDefault    =  publicDir    + "default";
+	    final String privateCowDefault = privateCowDir + "default";
+	    final String  publicCowDefault =  publicCowDir + "default";
 	    
-	    boolean esc = false;
-	    for (int d; (d = sayfeed.read()) != -1;)
-		if (d == '\n')
-		{
-		    if (ptr > 0)
-		    {
-			byte[] app = new byte[ptr];
-			System.arraycopy(buf, 0, app, 0, ptr);
-			list.add(app);
-		    }
-		    lines.add(list);
-		    list = new ArrayList<byte[]>();
-		    lens.add(new int[] { len });
-		    ptr = 0;
-		    len = 0;
-		}
-		else if (d == '\t')
-		{
-		    final int exp = 8 - (len & 7);
-		    len += exp;
-		    for (int i = 0; i < exp; i++)
-		    {
-			buf[ptr++] = (byte)' ';
-			if (ptr == SIZE)
-			{
-			    list.add(buf);
-			    buf = new byte[SIZE];
-			    ptr = 0;
-			}
-		    }
-		}
-		else
-		{
-		    if ((d & 0xC0) != 0x80)
-			if (d == '\033')
-			    esc = true;
-			else if (!esc)
-			    if (d == 8)
-				len--; //damn fortune cookies!
-			    else
-				len++;
-			else if (d == 'm')
-			    esc = false;
-		    buf[ptr++] = (byte)d;
-		    if (ptr == SIZE)
-		    {
-			list.add(buf);
-			buf = new byte[SIZE];
-			ptr = 0;
-		    }
-		}
-	    
-	    if (sayfeed != System.in)
-		sayfeed.close();
-	    
-	    if (ptr > 0)
+	    if      (usePonies && (new File(privateDefault   )).exists() && !random)  onePony = privateDefault;
+	    else if (usePonies && (new File( publicDefault   )).exists() && !random)  onePony =  publicDefault;
+	    else if (useCows   && (new File(privateCowDefault)).exists() && !random)  onePony = privateCowDefault;
+	    else if (useCows   && (new File( publicCowDefault)).exists() && !random)  onePony =  publicCowDefault;
+	    else
 	    {
-		byte[] app = new byte[ptr];
-		System.arraycopy(buf, 0, app, 0, ptr);
-		list.add(app);
+		pony.clear();
+		
+		if (usePonies)
+		    for (final String dir : new String[] {privateDir, publicDir, })
+			if ((new File(dir)).exists())
+			    for (final String file : (new File(dir)).list())
+				if (file.equals("default") == false)
+				    pony.add(dir + file);
+		
+		if (useCows)
+		    for (final String dir : new String[] {privateCowDir, publicCowDir, })
+			if ((new File(dir)).exists())
+			    for (final String file : (new File(dir)).list())
+				if (file.equals("default") == false)
+				    pony.add(dir + file);
+		
+		if (pony.isEmpty())
+		    onePony = null;
+		else
+		    onePony = pony.get(((int)(Math.random() * pony.size())) % pony.size());
 	    }
-	    lens.add(new int[] { len });
-	    lines.add(list);
 	}
 	
-	while ((lines.size() > 1) && (lines.get(lines.size() - 1).isEmpty()))
+	return new String[] { onePony, qq };
+    }
+    
+    
+    /**
+     * Gets the cow mode string
+     * 
+     * @param   linuxvt  Whether the terminal is Linux VT ($TERM = 'linux')
+     * @param   mode     Selected cow modes (--cow)
+     * @param   eye      Selected eye characters (--eye)
+     * @param   tongue   Selected tongue strings (--tongue)
+     * @return           Cow mode string
+     * 
+     * @throws  UnsupportedEncodingException  If UTF-8 is not supported, get a real system
+     */
+    private static byte[] getMode(final boolean linuxvt, final ArrayList<String> mode, final ArrayList<String> eye, final ArrayList<String> tongue) throws UnsupportedEncodingException
+    {
+	ArrayList<String> modes = new ArrayList<String>();
+	final HashMap<String, String> modeMap = new HashMap<String, String>();
+	
+	modeMap.put("borg",     "$eye==$$tongue=  $");      modes.add("$eye==$$tongue=  $");  // FIXME should be in a separate file
+	modeMap.put("dead",     "$eye=X$$tongue=U $");      modes.add("$eye=X$$tongue=U $");
+	modeMap.put("excited",  "$eye=O$$tongue=  $");      modes.add("$eye=O$$tongue=  $");
+	modeMap.put("greedy",   "$eye=\033$$$tongue=  $");  modes.add("$eye=\033$$$tongue=  $");
+	modeMap.put("happy",    "$eye=^$$tongue=  $");      modes.add("$eye=^$$tongue=  $");
+	modeMap.put("normal",   "$eye=o$$tongue=  $");      modes.add("$eye=o$$tongue=  $");
+	modeMap.put("paranoid", "$eye=@$$tongue=  $");      modes.add("$eye=@$$tongue=  $");
+	modeMap.put("stoned",   "$eye=*$$tongue=U $");      modes.add("$eye=*$$tongue=U $");
+	modeMap.put("tired",    "$eye=-$$tongue=  $");      modes.add("$eye=-$$tongue=  $");
+	modeMap.put("tongue",   "$eye=o$$tongue=U $");      modes.add("$eye=o$$tongue=U $");
+	modeMap.put("youthful", "$eye=.$$tongue=  $");      modes.add("$eye=.$$tongue=  $");
+	if (linuxvt == false)
+	{   modeMap.put("unamused", "$eye=σ$$tongue=  $");  modes.add("$eye=σ$$tongue=  $");
+	}
+	
+	if (mode.isEmpty() == false)
+	    modes = mode;
+	String _oneMode = modes.get((int)(Math.random() * modes.size()) % modes.size());
+	if (modeMap.containsKey(_oneMode))
+	    _oneMode = modeMap.get(_oneMode);
+	
+	if (eye.isEmpty() == false)
 	{
-	    lines.remove(lines.size() - 1);
-	    lens.remove(lens.size() - 1);
+	    final String oneEye = eye.get((int)(Math.random() * eye.size()) % eye.size());
+	    _oneMode += "$eye=" + oneEye.replace("\033", "\033\033").replace("$", "\033$") + "$";
 	}
 	
-	/*
-	for (int i = 0, m = lines.size(); i < m; i++)
+	if (tongue.isEmpty() == false)
 	{
-	    int dn = 0;
-	    int d = 0;
-	    for (final byte[] chunk : lines.get(i))
-		 for (final byte b : chunk)
-		 {
-		     if ((b & 0xC0) == 0x80)
-		     {
-			 d <<= 6;
-			 d |= b & 0x3F;
-			 dn--;
-		     }
-		     else
-		     {
-			 d = b;
-			 while ((d & 128) == 128)
-			 {
-			     dn++;
-			     d <<= 1;
-			 }
-			 d &= 255;
-			 d >>= dn;
-			 dn--;
-		     }
-		     if (dn == 0)
-		     {
-			 if ((d & 0xDC00) == 0xDC00) //UTF-16 encoded character in UTF-8
-			     lens.get(i)[0]--;
-		     }
-		 }
+	    final String oneTongue = tongue.get((int)(Math.random() * tongue.size()) % tongue.size());
+	    _oneMode += "$tongue=" + oneTongue.replace("\033", "\033\033").replace("$", "\033$") + "$";
 	}
-	*/
 	
-	int maxlen = 0;
-	for (final int[] len : lens)
-	    if (maxlen < len[0])
-		maxlen = len[0];
-	
-	final Baloon baloon = new Baloon(lens, maxlen, lines, mnw, mn, mne, me[0], mse, ms, msw, mw[0]);
-	say(onePony, baloon, ml[0], mL[0], oneMode);
+	return _oneMode.getBytes("UTF-8");
     }
     
     

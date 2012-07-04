@@ -1,5 +1,12 @@
+REQUIRED:
+
 sh
 # provided by bash
 
 java-runtime>=6
 # not sure how low we can go
+
+
+OPTIONAL:
+
+util-say: required for word wrapping
