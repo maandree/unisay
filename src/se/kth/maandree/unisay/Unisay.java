@@ -451,17 +451,24 @@ public class Unisay
     
     
     /**
-     * Splits joined short options
+     * Splits joined short options and long options from their arguments
      * 
      * @param   arg  Arguments
-     * @return       Arguments with splitted joined short options
+     * @return       Arguments splitted
      */
     private static String[] splitOpts(final String... args)
     {
 	final ArrayList<String> rc = new ArrayList<String>();
 	
 	for (final String arg : args)
-	    if      (arg.startsWith("--"))  rc.add(arg);
+	    if (arg.startsWith("--"))
+		if (arg.contains("="))
+		{
+		    rc.add(arg.substring(0, arg.indexOf("=")));
+		    rc.add(arg.substring(arg.indexOf("=") + 1));
+		}
+		else
+		    rc.add(arg);
 	    else if (arg.startsWith("-"))   for (int i = 1, n = arg.length(); i < n; i++)  rc.add("-" + arg.charAt(i));
 	    else if (arg.startsWith("+"))   for (int i = 1, n = arg.length(); i < n; i++)  rc.add("+" + arg.charAt(i));
 	    else
