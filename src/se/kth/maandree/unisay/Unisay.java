@@ -117,7 +117,7 @@ public class Unisay
 		System.out.print("\n\n");
 		System.out.println("  --format <FILE>");
 		System.out.println("  -p <FILE>     Specify the file you want to use thay provides an");
-		System.out.println("                alternative style for the baloon.");
+		System.out.println("                alternative style for the balloon.");
 		System.out.println("                You may add this option multiple times if you");
 		System.out.println("                want one to be picked randomly.");
 	    }
@@ -274,19 +274,19 @@ public class Unisay
 		System.out.print("\n\n");
 		System.out.println("BALOON STYLE FILE FORMAT:");
 		System.out.print("\n\n");
-		System.out.println("  Baloon style files must include ten lines, each starting");
+		System.out.println("  Balloon style files must include ten lines, each starting");
 		System.out.println("  start (uniquely) with one of the following exact beginnings:");
-		System.out.println("      nw:       The upper left corner of the baloon");
-		System.out.println("      n:        The upper edge of the baloon");
-		System.out.println("      ne:       The upper right corner of the baloon");
-		System.out.println("      e:        The right edge of the baloon");
-		System.out.println("      se:       The lower right corner of the baloon");
-		System.out.println("      s:        The lower edge of the baloon");
-		System.out.println("      sw:       The lower left corner of the baloon");
-		System.out.println("      w:        The left edge of the baloon");
-		System.out.println("      \\:        Link line between the baloon and the pony. (\\ direction)");
-		System.out.println("      /:        Link line between the baloon and the pony. (/ direction)");
-		//I have decided not to adopt cowsay's depenceny of the number of lines in the baloon.
+		System.out.println("      nw:       The upper left corner of the balloon");
+		System.out.println("      n:        The upper edge of the balloon");
+		System.out.println("      ne:       The upper right corner of the balloon");
+		System.out.println("      e:        The right edge of the balloon");
+		System.out.println("      se:       The lower right corner of the balloon");
+		System.out.println("      s:        The lower edge of the balloon");
+		System.out.println("      sw:       The lower left corner of the balloon");
+		System.out.println("      w:        The left edge of the balloon");
+		System.out.println("      \\:        Link line between the balloon and the pony. (\\ direction)");
+		System.out.println("      /:        Link line between the balloon and the pony. (/ direction)");
+		//I have decided not to adopt cowsay's depenceny of the number of lines in the balloon.
 		System.out.println("  Note that the are no spaces; the text followed by the colon on");
 		System.out.println("  such a line sets the attribute's value. Hashes (#) by be used");
 		System.out.println("  as the first character on a line to make it a comment. e:, w:,");
@@ -308,14 +308,14 @@ public class Unisay
 		System.out.println("  surrounded by dollar sign, i.e. $$, produces one dollar sign.");
 		System.out.println("  additionally, $\\$ produces the \\ directional link line character");
 		System.out.println("  sequence between the ballon and the pony, $/$ produces the /");
-		System.out.println("  directional version of this, while $baloon#$ produces the baloon");
+		System.out.println("  directional version of this, while $balloon#$ produces the balloon");
 		System.out.println("  with the message inside it, the hash (#) must be either removed");
 		System.out.println("  or replaced by an integer specifying the minimum allowed width of");
 		System.out.println("  the entire ballon. You may add ,# to the end of the tag (before");
 		System.out.println("  the second $) where # is an integer specifying the minimum allowed");
-		System.out.println("  height of the baloon, this option is independent of the width");
+		System.out.println("  height of the balloon, this option is independent of the width");
 		System.out.println("  option, and may create additional line in the end of the output,");
-		System.out.println("  the baloon will then be padded into place with blank spaces.");
+		System.out.println("  the balloon will then be padded into place with blank spaces.");
 		System.out.println("  You may also create your own tags, this is done by adding,");
 		System.out.println("  anywhere before used, a $name=text$ tag, the name of the tag");
 		System.out.println("  is not allowed to be / or \\, start with ballon or include =.");
@@ -604,8 +604,8 @@ public class Unisay
 	    if (maxlen < len[0])
 		maxlen = len[0];
 	
-	final Baloon baloon = new Baloon(lens, maxlen, lines, mnw, mn, mne, me[0], mse, ms, msw, mw[0]);
-	say(onePony, baloon, ml[0], mL[0], oneMode);
+	final Balloon balloon = new Balloon(lens, maxlen, lines, mnw, mn, mne, me[0], mse, ms, msw, mw[0]);
+	say(onePony, balloon, ml[0], mL[0], oneMode);
     }
     
     
@@ -750,7 +750,7 @@ public class Unisay
     
     
     /**
-     * Gets the baloon format
+     * Gets the balloon format
      * 
      * @param   format     -p
      * @param   publ       ~/.local/share/unisay/
@@ -1131,13 +1131,13 @@ public class Unisay
      * Performs the speaking!
      *
      * @param  ponyFile  The image file
-     * @parma  baloon    The baloon object
+     * @parma  balloon    The balloon object
      * @param  l         \ directional link symbol
      * @param  L         / directional link symbol
      * 
      * @throws  IOException  On I/O exception
      */
-    private static void say(final String ponyFile, final Baloon baloon, final int[] l, final int[] L, final byte[] mode) throws IOException
+    private static void say(final String ponyFile, final Balloon balloon, final int[] l, final int[] L, final byte[] mode) throws IOException
     {
 	final HashMap<String, byte[]> variables = new HashMap<String, byte[]>();
 	final InputStream _is = new BufferedInputStream(new FileInputStream(new File(ponyFile)));
@@ -1180,11 +1180,11 @@ public class Unisay
 			System.arraycopy(buf, eq + 1, val, 0, val.length);
 			variables.put(var, val);
 		    }
-		    else if (var.startsWith("baloon"))
+		    else if (var.startsWith("balloon"))
 		    {
 			int w = 0;
 			int h = 0;
-			final String props = var.substring("baloon".length());
+			final String props = var.substring("balloon".length());
 			if (props.isEmpty() == false)
 			    if (props.contains(","))
 			    {
@@ -1195,7 +1195,7 @@ public class Unisay
 			    else
 				w = Integer.parseInt(props);
 			
-			baloon.print(w, h, indent);
+			balloon.print(w, h, indent);
 			
 			indent = 0;
 		    }

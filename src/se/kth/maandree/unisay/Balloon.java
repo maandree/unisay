@@ -23,11 +23,11 @@ import java.io.*;
 
 
 /**
- * Baloon class
+ * Balloon class
  *
  * @author  Mattias Andrée, <a href="mailto:maandree@kth.se">maandree@kth.se</a>
  */
-public class Baloon
+public class Balloon
 {
     /**
      * Constructor
@@ -35,17 +35,17 @@ public class Baloon
      * @param  lens    The length of each line
      * @param  maxlen  The width of the saying
      * @param  say     The saying
-     * @param  nw      NW part of baloon
-     * @param  n       N  part of baloon
-     * @param  ne      NE part of baloon
-     * @param  e       E  part of baloon
-     * @param  se      SE part of baloon
-     * @param  s       S  part of baloon
-     * @param  sw      SW part of baloon
-     * @param  w       W  part of baloon
+     * @param  nw      NW part of balloon
+     * @param  n       N  part of balloon
+     * @param  ne      NE part of balloon
+     * @param  e       E  part of balloon
+     * @param  se      SE part of balloon
+     * @param  s       S  part of balloon
+     * @param  sw      SW part of balloon
+     * @param  w       W  part of balloon
      */
     @SuppressWarnings("hiding")
-    public Baloon(final ArrayList<int[]> lens, final int maxlen, final ArrayList<ArrayList<byte[]>> say,
+    public Balloon(final ArrayList<int[]> lens, final int maxlen, final ArrayList<ArrayList<byte[]>> say,
 		  final int[][] nw, final int[][] n, final int[][] ne, final int[] e,
 		  final int[][] se, final int[][] s, final int[][] sw, final int[] w)
     {
@@ -80,53 +80,53 @@ public class Baloon
     private ArrayList<ArrayList<byte[]>> say;
 	
     /**
-     * NW part of baloon
+     * NW part of balloon
      */
     private int[][] nw;
 	
     /**
-     * N part of baloon
+     * N part of balloon
      */
     private int[][] n;
 	
     /**
-     * NE part of baloon
+     * NE part of balloon
      */
     private int[][] ne;
 	
     /**
-     * E part of baloon
+     * E part of balloon
      */
     private int[] e;
 	
     /**
-     * SE part of baloon
+     * SE part of balloon
      */
     private int[][] se;
 	
     /**
-     * S part of baloon
+     * S part of balloon
      */
     private int[][] s;
 	
     /**
-     * SW part of baloon
+     * SW part of balloon
      */
     private int[][] sw;
 	
     /**
-     * W part of baloon
+     * W part of balloon
      */
     private int[] w;
 	
 	
 	
     /**
-     * Prints the baloon
+     * Prints the balloon
      *
-     * @param  width   The minimum width of the baloon
-     * @param  height  The minimum height of the baloon
-     * @param  indent  The indent of the baloon
+     * @param  width   The minimum width of the balloon
+     * @param  height  The minimum height of the balloon
+     * @param  indent  The indent of the balloon
      * 
      * @throws  IOException  On I/O exception
      */
@@ -215,7 +215,7 @@ public class Baloon
     
     
     /**
-     * Prints a test baloon
+     * Prints a test balloon
      * 
      * @param  args  Lines to say
      * 
@@ -248,8 +248,8 @@ public class Baloon
 	final int[][] sw = {{'\\'}};
 	final int[]    w = {'>'};
 	
-	final Baloon baloon = new Baloon(lens, maxlen, say, nw, n, ne, e, se, s, sw, w);
-	baloon.print(10, 4, 0);
+	final Balloon balloon = new Balloon(lens, maxlen, say, nw, n, ne, e, se, s, sw, w);
+	balloon.print(10, 4, 0);
     }
     
 }
