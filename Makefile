@@ -6,7 +6,7 @@ unisay:
 
 ttyponies:
 	mkdir share/unisay/ttypony
-	ttyponies.sh
+	./ttyponies.sh
 
 install: all
 	install -d "${DESTDIR}/usr/bin"
