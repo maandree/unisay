@@ -5,7 +5,6 @@
 /doc/javadoc/
 *.class
 /*.jar
-/dev/ecj.jar
 
 
 ##  backup files  ##
@@ -14,11 +13,19 @@
 *~
 \#*\#
 .\#*
+*.swp
 
 
-##  distribution files ##
-#########################
+##  distribution files  ##
+##########################
 
 /dist/*/src/
 /dist/*/unisay-*.tar.*
+
+
+##  non-included files  ##
+##########################
+
+/dev/ecj.jar
+/ecj.jar
 
