@@ -5,7 +5,7 @@ unisay:
 	jar -cfm unisay.jar META-INF/MANIFEST.MF $$(find ./se | grep '\.class$$')
 
 ttyponies:
-	mkdir share/unisay/ttypony
+	mkdir -p share/unisay/ttypony
 	./ttyponies.sh
 
 install: all
