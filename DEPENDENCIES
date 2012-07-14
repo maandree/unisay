@@ -1,4 +1,4 @@
-REQUIRED:
+MANDITORY DEPENDENCIES:
 
 sh
 # provided by bash
@@ -7,6 +7,15 @@ java-runtime>=6
 # not sure how low we can go
 
 
-OPTIONAL:
+
+OPTIONAL DEPENDENCIES:
 
 util-say: required for word wrapping
+
+
+
+MAKE DEPENDENCIES:
+
+util-say
+# builds the ttyponies
+
