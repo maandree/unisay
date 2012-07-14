@@ -1,0 +1,24 @@
+##  compiled files  ##
+######################
+
+/bin/
+/doc/javadoc/
+*.class
+/*.jar
+/dev/ecj.jar
+
+
+##  backup files  ##
+####################
+
+*~
+\#*\#
+.\#*
+
+
+##  distribution files ##
+#########################
+
+/dist/*/src/
+/dist/*/unisay-*.tar.*
+
