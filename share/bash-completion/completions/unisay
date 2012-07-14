@@ -12,10 +12,10 @@ _unisay()
 	usrformats=~/.local/share/unisay/format/
 	
 	if [[ -d $sysformats ]]; then
-	    COMPREPLY+=( $( compgen -W "$(ls $sysformats)" -- "$cur" ) )
+	    COMPREPLY+=( $( compgen -W "$(ls --color=no $sysformats)" -- "$cur" ) )
 	fi
 	if [[ -d $usrformats ]]; then
-	    COMPREPLY+=( $( compgen -W "$(ls $usrformats)" -- "$cur" ) )
+	    COMPREPLY+=( $( compgen -W "$(ls --color=no $usrformats)" -- "$cur" ) )
 	fi
     elif [[ $prev = "--say" || $prev = "-s" ]]; then
 	COMPREPLY=( '"`fortune`"' )  #bug in completion itself breaks up quotes, even if not added through completion
@@ -34,10 +34,10 @@ _unisay()
 	fi
 	
 	if [[ -d $sysponies ]]; then
-	    COMPREPLY+=( $( compgen -W "$(ls $sysponies)" -- "$cur" ) )
+	    COMPREPLY+=( $( compgen -W "$(ls --color=no $sysponies)" -- "$cur" ) )
 	fi
 	if [[ -d $usrponies ]]; then
-	    COMPREPLY+=( $( compgen -W "$(ls $usrponies)" -- "$cur" ) )
+	    COMPREPLY+=( $( compgen -W "$(ls --color=no $usrponies)" -- "$cur" ) )
 	fi
 	
 	if [[ $prev = "--cows" || $prev = "-C" ]]; then
@@ -49,10 +49,10 @@ _unisay()
             usrponies=~/.local/share/unisay/cow/
 	    
 	    if [[ -d $sysponies ]]; then
-		COMPREPLY+=( $( compgen -W "$(ls $sysponies)" -- "$cur" ) )
+		COMPREPLY+=( $( compgen -W "$(ls --color=no $sysponies)" -- "$cur" ) )
 	    fi
 	    if [[ -d $usrponies ]]; then
-		COMPREPLY+=( $( compgen -W "$(ls $usrponies)" -- "$cur" ) )
+		COMPREPLY+=( $( compgen -W "$(ls --color=no $usrponies)" -- "$cur" ) )
 	    fi
 	fi
     fi
