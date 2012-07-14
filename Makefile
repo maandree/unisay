@@ -1,9 +1,12 @@
-all: unisay
+all: unisay ttyponies
 
 unisay:
 	javac -cp . -s src -d . $$(find ./src | grep '\.java$$')
 	jar -cfm unisay.jar META-INF/MANIFEST.MF $$(find ./se | grep '\.class$$')
-	rm -r se
+
+ttyponies:
+	mkdir share/unisay/ttypony
+	ttyponies.sh
 
 install: all
 	install -d "${DESTDIR}/usr/bin"
@@ -30,3 +33,8 @@ uninstall:
 	unlink "${DESTDIR}/usr/share/bash-completion/completions/unisay"
 	rm -rf "${DESTDIR}/usr/share/liceses/unisay"
 	rm -rf "${DESTDIR}/usr/share/unisay"
+
+clean:
+	rm -r se
+	rm unisay.jar
+	rm -r share/unisay/ttypony
