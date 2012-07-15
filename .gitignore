@@ -6,6 +6,7 @@
 *.class
 /*.jar
 /share/unisay/ttypony/
+/share/unisay/ponyquotes/
 
 
 ##  backup files  ##
