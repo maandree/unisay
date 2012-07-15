@@ -1,4 +1,4 @@
-Baloonless print, just the pony (-I, +I for just the quote)
+Balloonless print, just the pony (-I, +I for just the quote)
 
 Wrap message to fit screen (-w WIDTH | -w no)
 
@@ -9,8 +9,6 @@ Event remainders (disabled with -N)
 Autocolouring (disabled with -N)
 
 Improve colours on ponies
-
-Update ponyquotes
 
 Environment variables: truncation and tty
 
