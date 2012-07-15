@@ -65,7 +65,7 @@ fi
 warns="-Xlint:all"
 
 ## standard parameters
-params="-source 7 -target 7 -s src -d bin"
+params="-source 1.5 -target 1.5 -s src -d bin"
 
 
 ## libraries
@@ -103,7 +103,7 @@ for opt in "$@"; do
 	    }
 	fi
 	function _javac()
-	{   javacSeven -source 6 -target 6 "$@"
+	{   javacSeven "$@"
 	}
 	errs="-err:conditionAssign,noEffectAssign,enumIdentifier,hashCode"
 	warns=$errs" -warn:allDeadCode,allDeprecation,allOver-ann,all-static-method,assertIdentifier,boxing,charConcat,compareIdentical,constructorName,deadCode,dep-ann,deprecation,"
@@ -158,6 +158,6 @@ if [ -f 'src/se/kth/maandree/javagen/ExceptionGenerator.java' ]; then
     ) | colourise
 fi
 
-## compile ponypipe
-( _javac $warns -cp .:bin$jars -s src -d bin $(find src | grep '\.java$')  2>&1
+## compile unisay
+( _javac $warns -cp .:bin$jars $params $(find src | grep '\.java$')  2>&1
 ) | colourise

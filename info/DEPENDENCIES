@@ -3,14 +3,17 @@ MANDITORY DEPENDENCIES:
 sh
 # provided by bash
 
-java-runtime>=6
-# not sure how low we can go
+java-runtime-headless>=1.5
+
+coreutils
+# for misc.
 
 
 
 OPTIONAL DEPENDENCIES:
 
 util-say: required for word wrapping
+# provided by aur/util-say-git
 
 
 
@@ -19,3 +22,13 @@ MAKE DEPENDENCIES:
 util-say
 # builds the ttyponies
 
+sh
+# provided by bash
+
+coreutils
+# for misc.
+
+java-environment>=1.5
+
+make
+# for the make script
