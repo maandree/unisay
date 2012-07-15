@@ -2,7 +2,7 @@ cowsay+ponysay rewritten in Java, with added features such as
 pony quotes and full Unicode(!) support.
 
 
-![screenshot](https://github.com/maandree/unisay/raw/master/screenshot.png)
+![screenshot](https://github.com/maandree/unisay/raw/master/info/screenshot.png)
 
 
 Note that unisay does not use same options as ponysay or cowsay,

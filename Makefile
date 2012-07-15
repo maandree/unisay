@@ -1,3 +1,10 @@
+#!/usr/bin/make
+
+# This script is put in Public Domain
+# Year: 2012
+# Author: Mattias Andrée (maandree@kth.se)
+
+
 all: unisay ttyponies ponyquotes
 
 

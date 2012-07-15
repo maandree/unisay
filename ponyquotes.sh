@@ -1,5 +1,10 @@
 #!/bin/sh
 
+# This script is put in Public Domain
+# Year: 2012
+# Author: Mattias Andrée (maandree@kth.se)
+
+
 for ponies in $(cat share-src/unisay/ponyquotes/ponies); do
     for pony in $(echo $ponies | sed -e 's/+/ /g'); do
 
