@@ -339,7 +339,7 @@ public class Unisay
 	    System.out.println("along with this library.  If not, see <http://www.gnu.org/licenses/>.");
 	    System.out.println();
 	    System.out.println();
-	    System.out.println("Neither cowsay or ponysay nor way other program was cannibalised,");
+	    System.out.println("Neither cowsay, ponysay nor any other program was cannibalised,");
 	    System.out.println("but I did cannibalise ponies and eat some delicous pancake\"let\"s.");
 	    System.out.println();
 	    System.out.println();
