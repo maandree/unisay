@@ -21,7 +21,7 @@ ponyquotes:
 	./ponyquotes.sh
 
 
-install: all
+install:
 	install -d "${DESTDIR}/usr/bin"
 	install -d "${DESTDIR}/usr/share/bash-completion/completions"
 	install -d "${DESTDIR}/usr/share/licenses/unisay"
