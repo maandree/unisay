@@ -1,4 +1,5 @@
-all: unisay ttyponies
+all: unisay ttyponies ponyquotes
+
 
 unisay:
 	javac -cp . -s src -d . $$(find ./src | grep '\.java$$')
@@ -7,6 +8,11 @@ unisay:
 ttyponies:
 	mkdir -p share/unisay/ttypony
 	./ttyponies.sh
+
+ponyquotes:
+	mkdir -p share/unisay/ponyquotes
+	./ponyquotes.sh
+
 
 install: all
 	install -d "${DESTDIR}/usr/bin"
@@ -28,6 +34,7 @@ install: all
 	install -m 644 share/unisay/ponyquotes/* "${DESTDIR}/usr/share/unisay/ponyquotes"
 	install -m 644 share/unisay/ttypony/* "${DESTDIR}/usr/share/unisay/ttypony"
 
+
 uninstall:
 	unlink "${DESTDIR}/usr/bin/unisay"
 	unlink "${DESTDIR}/usr/bin/unisay.jar"
@@ -35,7 +42,9 @@ uninstall:
 	rm -rf "${DESTDIR}/usr/share/liceses/unisay"
 	rm -rf "${DESTDIR}/usr/share/unisay"
 
+
 clean:
 	rm -r se
 	rm unisay.jar
 	rm -r share/unisay/ttypony
+	rm -r share/unisay/ponyquotes
