@@ -5,6 +5,7 @@
 /doc/javadoc/
 *.class
 /*.jar
+/share/unisay/ttypony/
 
 
 ##  backup files  ##
