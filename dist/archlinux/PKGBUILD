@@ -13,7 +13,7 @@ pkgrel=2
 pkgdesc="cowsay+ponysay rewritten in Java, with added features such as pony quotes and full Unicode support"
 arch=('any')
 url="https://github.com/maandree/unisay"
-license=('Public Domain')
+license=('GPL3')
 depends=('java-runtime>=1.5')
 makedepends=('git' 'java-environment>=1.5' 'bash' 'make' 'util-say-git')
 provides=('unisay')
