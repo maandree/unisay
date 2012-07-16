@@ -8,6 +8,9 @@ pony quotes and full Unicode(!) support.
 Note that unisay does not use same options as ponysay or cowsay,
 start with --help for more information, with or without options.
 
+This program is perfect for generating answers to e-mails with ponies and
+quotes of them. Possibly with figlet.
+
 Install
 -------
 
