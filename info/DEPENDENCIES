@@ -32,3 +32,6 @@ java-environment>=1.5
 
 make
 # for the make script
+
+sed
+# for the make script
