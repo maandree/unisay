@@ -469,8 +469,8 @@ public class Unisay
 		}
 		else
 		    rc.add(arg);
-	    else if (arg.startsWith("-"))   for (int i = 1, n = arg.length(); i < n; i++)  rc.add("-" + arg.charAt(i));
-	    else if (arg.startsWith("+"))   for (int i = 1, n = arg.length(); i < n; i++)  rc.add("+" + arg.charAt(i));
+	    else if (arg.startsWith("-"))  for (int i = 1, n = arg.length(); i < n; i++)  rc.add("-" + arg.charAt(i));
+	    else if (arg.startsWith("+"))  for (int i = 1, n = arg.length(); i < n; i++)  rc.add("+" + arg.charAt(i));
 	    else
 		rc.add(arg);
 	
@@ -1018,7 +1018,7 @@ public class Unisay
 	    if (qlist.isEmpty())
 	    {
 		onePony = pony.get(((int)(Math.random() * pony.size())) % (pony.size()));
-		qq = "\0\033[1;31mI am totaly speechless!\033[0m";
+		qq = "\0\033[1;31mI am totally speechless!\033[0m";
 		if ((new File(privateDir + onePony)).exists())
 		    onePony = privateDir + onePony;
 		else
