@@ -563,10 +563,13 @@ public class Unisay
 	String[] tmpzarr = getPony(pony, useCows, usePonies, quote, linuxvt, random, publ, priv);
 	String onePony = tmpzarr[0];
 	if (tmpzarr[1] != null)
-	{
-	    oneSay = null;
-	    sayfeed = new BufferedInputStream(new FileInputStream(new File(tmpzarr[1])));
-	}
+	    if (tmpzarr[1].startsWith("\0"))
+		oneSay = tmpzarr[1].substring(1);
+	    else
+	    {
+		oneSay = null;
+		sayfeed = new BufferedInputStream(new FileInputStream(new File(tmpzarr[1])));
+	    }
 	
 	if (onePony == null)
 	{
@@ -1012,10 +1015,22 @@ public class Unisay
 				qlist.add(values);
 			}
 	    
-	    final ArrayList<String> q = qlist.get(((int)(Math.random() * qlist.size())) % qlist.size());
-	    final String qp = q.get(1 + ((int)(Math.random() * (q.size() - 1))) % (q.size() - 1));
-	    onePony = ponymap.get(qp);
-	    qq = q.get(0);
+	    if (qlist.isEmpty())
+	    {
+		onePony = pony.get(((int)(Math.random() * pony.size())) % (pony.size()));
+		qq = "\0\033[1;31mI am totaly speechless!\033[0m";
+		if ((new File(privateDir + onePony)).exists())
+		    onePony = privateDir + onePony;
+		else
+		    onePony = publicDir + onePony;
+	    }
+	    else
+	    {
+		final ArrayList<String> q = qlist.get(((int)(Math.random() * qlist.size())) % qlist.size());
+		final String qp = q.get(1 + ((int)(Math.random() * (q.size() - 1))) % (q.size() - 1));
+		onePony = ponymap.get(qp);
+		qq = q.get(0);
+	    }
 	}
 	else if (pony.isEmpty() == false)
 	{

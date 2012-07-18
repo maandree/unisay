@@ -34,7 +34,7 @@ public class Util
      */
     private Util()
     {
-	assert false : "This class [Util] is not meant to be instansiated.";
+        assert false : "This class [Util] is not meant to be instansiated.";
     }
     
     
@@ -47,11 +47,11 @@ public class Util
      */
     public static boolean equalsAny(final String matchee, final String... matches)
     {
-	for (final String match : matches)
-	    if (matchee.equals(match))
-		return true;
-	
-	return false;
+        for (final String match : matches)
+            if (matchee.equals(match))
+                return true;
+        
+        return false;
     }
     
     /**
@@ -62,28 +62,28 @@ public class Util
      */
     public static String getProperty(final String property)
     {
-	try
-	{
-	    final Process process = (new ProcessBuilder("/bin/sh", "-c", "echo $" + property)).start();
-	    String rcs = new String();
-	    final InputStream stream = process.getInputStream();
-	    int c;
-	    while (((c = stream.read()) != '\n') && (c != -1))
-		rcs += (char)c;
-	    try
-	    {
-		stream.close();
-	    }
-	    catch (final Throwable err)
-	    {
-		//Ignore
-	    }
-	    return rcs;
-	}
-	catch (final Throwable err)
-	{
-	    return new String();
-	}
+        try
+        {
+            final Process process = (new ProcessBuilder("/bin/sh", "-c", "echo $" + property)).start();
+            String rcs = new String();
+            final InputStream stream = process.getInputStream();
+            int c;
+            while (((c = stream.read()) != '\n') && (c != -1))
+                rcs += (char)c;
+            try
+            {
+                stream.close();
+            }
+            catch (final Throwable err)
+            {
+                //Ignore
+            }
+            return rcs;
+        }
+        catch (final Throwable err)
+        {
+            return new String();
+        }
     }
     
     /**
@@ -93,28 +93,28 @@ public class Util
      */
     public static int getWidth()
     {
-	try
-	{
-	    final Process process = (new ProcessBuilder("/bin/sh", "-c", "stty size < " + (new File("/dev/stderr")).getCanonicalPath() + " | cut -d ' ' -f 2")).start();
-	    String rcs = new String();
-	    final InputStream stream = process.getInputStream();
-	    int c;
-	    while (((c = stream.read()) != '\n') && (c != -1))
-		rcs += (char)c;
-	    try
-	    {
-		stream.close();
-	    }
-	    catch (final Throwable err)
-	    {
-		//Ignore
-	    }
-	    return Integer.parseInt(rcs);
-	}
-	catch (final Throwable err)
-	{
-	    return 0;
-	}
+        try
+        {
+            final Process process = (new ProcessBuilder("/bin/sh", "-c", "stty size < " + (new File("/dev/stderr")).getCanonicalPath() + " | cut -d ' ' -f 2")).start();
+            String rcs = new String();
+            final InputStream stream = process.getInputStream();
+            int c;
+            while (((c = stream.read()) != '\n') && (c != -1))
+                rcs += (char)c;
+            try
+            {
+                stream.close();
+            }
+            catch (final Throwable err)
+            {
+                //Ignore
+            }
+            return Integer.parseInt(rcs);
+        }
+        catch (final Throwable err)
+        {
+            return 0;
+        }
     }
     
     /**
@@ -124,28 +124,28 @@ public class Util
      */
     public static int getHeight()
     {
-	try
-	{
-	    final Process process = (new ProcessBuilder("/bin/sh", "-c", "stty size < " + (new File("/dev/stderr")).getCanonicalPath() + " | cut -d ' ' -f 1")).start();
-	    String rcs = new String();
-	    final InputStream stream = process.getInputStream();
-	    int c;
-	    while (((c = stream.read()) != '\n') && (c != -1))
-		rcs += (char)c;
-	    try
-	    {
-		stream.close();
-	    }
-	    catch (final Throwable err)
-	    {
-		//Ignore
-	    }
-	    return Integer.parseInt(rcs);
-	}
-	catch (final Throwable err)
-	{
-	    return 0;
-	}
+        try
+        {
+            final Process process = (new ProcessBuilder("/bin/sh", "-c", "stty size < " + (new File("/dev/stderr")).getCanonicalPath() + " | cut -d ' ' -f 1")).start();
+            String rcs = new String();
+            final InputStream stream = process.getInputStream();
+            int c;
+            while (((c = stream.read()) != '\n') && (c != -1))
+                rcs += (char)c;
+            try
+            {
+                stream.close();
+            }
+            catch (final Throwable err)
+            {
+                //Ignore
+            }
+            return Integer.parseInt(rcs);
+        }
+        catch (final Throwable err)
+        {
+            return 0;
+        }
     }
     
     /**
@@ -156,7 +156,7 @@ public class Util
      */
     public static byte[] toBytes(final int character)
     {
-	return toBytes(new int[] { character });
+        return toBytes(new int[] { character });
     }
     
     /**
@@ -167,50 +167,50 @@ public class Util
      */
     public static byte[] toBytes(final int[] string)
     {
-	//7:  0xxxyyyy
-	//11: 110xyyyy 10xxyyyy
-	//16: 1110xxxx 10xxyyyy 10xxyyyy
-	//21: 11110xxx 10xxyyyy 10xxyyyy 10xxyyyy
-	//26: 111110xx 10xxyyyy 10xxyyyy 10xxyyyy 10xxyyyy
-	//31: 1111110x 10xxyyyy 10xxyyyy 10xxyyyy 10xxyyyy 10xxyyyy
-	
-	final ArrayList<byte[]> chars = new ArrayList<byte[]>();
-	int length = 0;
-	
-	final byte[] buf = new byte[6];
-	for (final int c : string)
-	    if (c < 0x80)
-	    {
-		chars.add(new byte[] { (byte)c });
-		length++;
-	    }
-	    else
-	    {
-		int i = 0;
-		int b = c;
-		while (b >= 0x40)
-		{
-		    buf[i++] = (byte)((b & 0x3F) | 0x80);
-		    b >>>= 6;
-		}
-		buf[i++] = (byte)b;
-		byte[] arr = new byte[i];
-		for (int j = 0; j < i; j++)
-		    arr[j] = buf[i - j - 1];
-		arr[0] |= (byte)((0xFF << (8 - i)) & 0xFF);
-		chars.add(arr);
-		length += i;
-	    }
-	
-	final byte[] rc = new byte[length];
-	int ptr = 0;
-	for (final byte[] c : chars)
-	{
-	    System.arraycopy(c, 0, rc, ptr, c.length);
-	    ptr += c.length;
-	}
-	
-	return rc;
+        //7:  0xxxyyyy
+        //11: 110xyyyy 10xxyyyy
+        //16: 1110xxxx 10xxyyyy 10xxyyyy
+        //21: 11110xxx 10xxyyyy 10xxyyyy 10xxyyyy
+        //26: 111110xx 10xxyyyy 10xxyyyy 10xxyyyy 10xxyyyy
+        //31: 1111110x 10xxyyyy 10xxyyyy 10xxyyyy 10xxyyyy 10xxyyyy
+        
+        final ArrayList<byte[]> chars = new ArrayList<byte[]>();
+        int length = 0;
+        
+        final byte[] buf = new byte[6];
+        for (final int c : string)
+            if (c < 0x80)
+            {
+                chars.add(new byte[] { (byte)c });
+                length++;
+            }
+            else
+            {
+                int i = 0;
+                int b = c;
+                while (b >= 0x40)
+                {
+                    buf[i++] = (byte)((b & 0x3F) | 0x80);
+                    b >>>= 6;
+                }
+                buf[i++] = (byte)b;
+                byte[] arr = new byte[i];
+                for (int j = 0; j < i; j++)
+                    arr[j] = buf[i - j - 1];
+                arr[0] |= (byte)((0xFF << (8 - i)) & 0xFF);
+                chars.add(arr);
+                length += i;
+            }
+        
+        final byte[] rc = new byte[length];
+        int ptr = 0;
+        for (final byte[] c : chars)
+        {
+            System.arraycopy(c, 0, rc, ptr, c.length);
+            ptr += c.length;
+        }
+        
+        return rc;
     }
     
     
@@ -224,14 +224,14 @@ public class Util
      */
     public static void main(final String... args) throws IOException
     {
-	for (final String arg : args)
+        for (final String arg : args)
         {
-	    final int[] ints = new int[arg.length()];
-	    for (int i = 0, n = ints.length; i < n; i++)
-		ints[i] = arg.charAt(i);
-	    System.out.write(toBytes(ints));
-	    System.out.println();
-	}
+            final int[] ints = new int[arg.length()];
+            for (int i = 0, n = ints.length; i < n; i++)
+                ints[i] = arg.charAt(i);
+            System.out.write(toBytes(ints));
+            System.out.println();
+        }
     }
     
 }
