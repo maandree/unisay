@@ -240,6 +240,7 @@ Cannibalised from desktop ponies, and then commit to ponysay:
   pony/
     applecore
     applejackscarecrow
+    blossomforth
     cottoncloudy
     diamondmint
     fillycadence
@@ -268,4 +269,11 @@ Cannibalised from desktop ponies, and then commit to ponysay:
     twilightcrazyfromball
     twilightzero
     wildfire
+
+
+Cannibalised from desktop ponies, but independently commit to ponysay:
+  pony/
+    discordpuppetmaster
+    owl
+    skyra
 
