@@ -8,7 +8,7 @@ arch=('any')
 url="https://github.com/maandree/unisay"
 license=('GPL3')
 depends=('java-runtime>=1.5')
-makedepends=('git' 'java-environment>=1.5' 'bash' 'make' 'util-say-git' 'sed')
+makedepends=('git' 'java-environment>=1.5' 'bash' 'make' 'util-say' 'sed')
 provides=('unisay')
 conflicts=('unisay')
 
